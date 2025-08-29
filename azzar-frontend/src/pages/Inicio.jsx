@@ -1,9 +1,13 @@
+import { useNavigate } from "react-router-dom";
 import background from '../assets/background-main.webp';
 import laptop from '../assets/laptop.png';
 import iphone from '../assets/iphone.webp';
 import ps5 from '../assets/ps5.png';
 
+
 function Inicio() {
+  const navigate = useNavigate();
+
   return (
     <div>
       <section
@@ -21,9 +25,8 @@ function Inicio() {
           </div>
 
           <div className="flex-1 text-white space-y-4">
-            <p className="inicio-info-p">21 de noviembre</p>
             <h2 className="inicio-info-h2">Sorteos</h2>
-            <button className="inicio-info-btn">
+            <button className="inicio-info-btn" onClick={() => navigate("/comprar")}>
               Comprar aquí
             </button>
           </div>
