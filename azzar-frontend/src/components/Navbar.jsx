@@ -1,11 +1,16 @@
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import IniciarSesion from "./IniciarSesion";
 import CrearCuenta from "./CrearCuenta";
 import './css/Navbar.css';
 
 function Navbar() {
   const [modal, setModal] = useState(null);
+  const navigate = useNavigate();
+
+  const Inicio = () => {
+    navigate("/");
+  }
 
   const linkClass = ({ isActive }) =>
     isActive ? "nav-item active" : "nav-item";
@@ -14,7 +19,7 @@ function Navbar() {
     <>
       <nav className="navbar">
         <div className="navbar-container">
-          <h1 className="navbar-logo">Azzar</h1>
+          <h1 className="navbar-logo cursor-pointer" onClick={Inicio}>Azzar</h1>
           <div className="navbar-links">
             <span onClick={() => setModal("signup")} className="item-account">Crear cuenta</span>
             <span onClick={() => setModal("login")} className="item-account">Iniciar sesion</span>

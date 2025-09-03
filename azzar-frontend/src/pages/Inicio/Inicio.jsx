@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import '../Inicio/Inicio.css'
 import consolas from '../../assets/consolas.webp'
 import auriculares from '../../assets/auriculares.webp'
@@ -18,6 +19,10 @@ function Inicio() {
     { img: tecnologia, title: "Tecnologia" },
     { img: muebles, title: "Muebles" }
   ];
+
+  const premios = [
+    { img: ps5, title: "Playstation 5", descripcion: "La PS5 incorpora soporte para salida de 120 Hz en pantallas 4K..." }
+  ]
 
   return (
     <div>
@@ -49,78 +54,17 @@ function Inicio() {
             </div>
             <div className='premios-container-main-list'>
               <div className='premios-container-main-list-content'>
-                <div className='premios-item'>
-                  <img src={ps5} alt='ps5'/>
-                  <span className='premios-precio'>Gs 10.000</span>
-                  <span className='premios-title'>Playstation 5</span>
-                  <span className='premios-descripcion'>La PS5 incorpora soporte para salida de 120 Hz en pantallas 4K, permitiéndote...</span>
-                  <button className='premios-btn'>
-                    Participar
-                  </button>
-                </div>
-                <div className='premios-item'>
-                  <img src={ps5} alt='ps5'/>
-                  <span className='premios-precio'>Gs 10.000</span>
-                  <span className='premios-title'>Playstation 5</span>
-                  <span className='premios-descripcion'>La PS5 incorpora soporte para salida de 120 Hz en pantallas 4K, permitiéndote...</span>
-                  <button className='premios-btn'>
-                    Participar
-                  </button>
-                </div>
-                <div className='premios-item'>
-                  <img src={ps5} alt='ps5'/>
-                  <span className='premios-precio'>Gs 10.000</span>
-                  <span className='premios-title'>Playstation 5</span>
-                  <span className='premios-descripcion'>La PS5 incorpora soporte para salida de 120 Hz en pantallas 4K, permitiéndote...</span>
-                  <button className='premios-btn'>
-                    Participar
-                  </button>
-                </div>
-                <div className='premios-item'>
-                  <img src={ps5} alt='ps5'/>
-                  <span className='premios-precio'>Gs 10.000</span>
-                  <span className='premios-title'>Playstation 5</span>
-                  <span className='premios-descripcion'>La PS5 incorpora soporte para salida de 120 Hz en pantallas 4K, permitiéndote...</span>
-                  <button className='premios-btn'>
-                    Participar
-                  </button>
-                </div>
-                <div className='premios-item'>
-                  <img src={ps5} alt='ps5'/>
-                  <span className='premios-precio'>Gs 10.000</span>
-                  <span className='premios-title'>Playstation 5</span>
-                  <span className='premios-descripcion'>La PS5 incorpora soporte para salida de 120 Hz en pantallas 4K, permitiéndote...</span>
-                  <button className='premios-btn'>
-                    Participar
-                  </button>
-                </div>
-                <div className='premios-item'>
-                  <img src={ps5} alt='ps5'/>
-                  <span className='premios-precio'>Gs 10.000</span>
-                  <span className='premios-title'>Playstation 5</span>
-                  <span className='premios-descripcion'>La PS5 incorpora soporte para salida de 120 Hz en pantallas 4K, permitiéndote...</span>
-                  <button className='premios-btn'>
-                    Participar
-                  </button>
-                </div>
-                <div className='premios-item'>
-                  <img src={ps5} alt='ps5'/>
-                  <span className='premios-precio'>Gs 10.000</span>
-                  <span className='premios-title'>Playstation 5</span>
-                  <span className='premios-descripcion'>La PS5 incorpora soporte para salida de 120 Hz en pantallas 4K, permitiéndote...</span>
-                  <button className='premios-btn'>
-                    Participar
-                  </button>
-                </div>
-                <div className='premios-item'>
-                  <img src={ps5} alt='ps5'/>
-                  <span className='premios-precio'>Gs 10.000</span>
-                  <span className='premios-title'>Playstation 5</span>
-                  <span className='premios-descripcion'>La PS5 incorpora soporte para salida de 120 Hz en pantallas 4K, permitiéndote...</span>
-                  <button className='premios-btn'>
-                    Participar
-                  </button>
-                </div>
+                {premios.map((item, index) => (
+                  <div key={index} className='premios-item'>
+                    <img src={item.img} alt={item.title} />
+                    <span className='premios-precio'>Gs 10.000</span>
+                    <span className='premios-title'>{item.title}</span>
+                    <span className='premios-descripcion'>{item.descripcion}</span>
+                    <Link to={`/premio/${encodeURIComponent(item.title)}`} className='premios-btn'>
+                      Participar
+                    </Link>
+                  </div>
+                ))}
               </div>
             </div>
             <div className='premios-container-main-paginas'>

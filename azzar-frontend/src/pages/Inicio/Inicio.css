@@ -179,7 +179,7 @@
   border: 1px solid #ddd;
   border-radius: 12px;
   padding: 15px;
-  max-width: 270px;
+  max-width: 275px;
   max-height: 440px;
   display: flex;
   flex-direction: column;
@@ -226,7 +226,9 @@
   text-align: center;
   font-weight: 500;
   border-radius: 20px;
-  margin: 10px 0 ;
+  margin: 10px 0;
+  color: #202020;
+  text-decoration: none;
 }
 
 .premios-btn:hover{
