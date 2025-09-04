@@ -4,6 +4,9 @@ import { useState } from 'react';
 
 function CrearCuenta({ onClose }) {
   const [countryCode, setCountryCode] = useState("+595");
+  const [name, setName] = useState("");         
+  const [sexo, setSexo] = useState("F");  
+  const [ci, setCi] = useState("");   
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -58,6 +61,37 @@ function CrearCuenta({ onClose }) {
     }
   }
 
+const registrarUsuario = async (e) => {
+  e.preventDefault();
+  try {
+    const response = await fetch("http://localhost:8080/v1/sorteo/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        nombreApellido: name, 
+        sexo: sexo,           
+        telefono: `${countryCode}${phone.replace(/\s/g, "")}`, // sin espacios
+        nroDocumento: ci,   // asigna el valor de input
+        correo: email,
+        password: password
+      })
+    });
+    console.log(response);
+    const data = await response.json();
+
+    if (response.ok) {
+      console.log("✅ Usuario registrado:", data);
+      onClose(); // cerramos modal
+    } else {
+      setError(data.error || "Error al registrar usuario ❌");
+    }
+  } catch (err) {
+    console.error(err);
+    setError("Error de conexión con el servidor");
+  }
+};
+
+
   return (
   <div className="modal-overlay">
     {!showVerifyModal ? (
@@ -77,6 +111,7 @@ function CrearCuenta({ onClose }) {
                   type="text"
                   placeholder="Nombre y Apellido"
                   className="input-field"
+                  onChange={(e) => setName(e.target.value)}
                   required
                 />
               </label>
@@ -85,6 +120,7 @@ function CrearCuenta({ onClose }) {
                 <select className='select-field'>
                   <option value="F">Femenino</option>
                   <option value="M">Masculino</option>
+                  onChange={(e) => setSexo(e.target.value)}
                 </select>
               </label>
             </div>
@@ -113,6 +149,7 @@ function CrearCuenta({ onClose }) {
                 <span>Nro. Documento</span>
                 <input type="text" 
                 placeholder='Nro. Documento' 
+                onChange={(e) => setCi(e.target.value)}
                 required/>
               </label>
             </div>
@@ -144,7 +181,7 @@ function CrearCuenta({ onClose }) {
           </label>
 
           {error && <p className="error-message">{error}</p>}
-          <button className="registrar-btn" onClick={enviarCorreo}>Registrar</button>
+          <button className="registrar-btn" onClick={registrarUsuario}>Registrar</button>
         </form>
       </div>
     ) : (
@@ -160,6 +197,7 @@ function CrearCuenta({ onClose }) {
         <button
           onClick={() => {
             if (verificationCode === generatedCode.toString()) {
+              registrarUsuario();
               setShowVerifyModal(false);
             } else {
               console.log('Error')
