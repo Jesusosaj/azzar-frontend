@@ -4,14 +4,18 @@ import { useState } from 'react';
 
 function CrearCuenta({ onClose }) {
   const [countryCode, setCountryCode] = useState("+595");
-  const [phone, setPhone] = useState("");
-  const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [showVerifyModal, setShowVerifyModal] = useState(false);
   const [verificationCode, setVerificationCode] = useState(""); 
   const [generatedCode, setGeneratedCode] = useState("");
-  const [email, setEmail] = useState(""); 
+
+  const [nombre, setNombre] = useState("");
+  const [documento, setDocumento] = useState("");
+  const [sexo, setSexo] = useState("F");
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
 
   const handlePhoneChange = (e) => {
     let value = e.target.value.replace(/\D/g, "");
@@ -31,7 +35,7 @@ function CrearCuenta({ onClose }) {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      setError("Las contraseñas no coinciden ❌");
+      setError("Las contraseñas no coinciden");
       return;
     }
 
@@ -46,7 +50,6 @@ function CrearCuenta({ onClose }) {
 
       const data = await response.json();
 
-      console.log(data);
       if (response.ok) {
         setGeneratedCode(data.codigo);
         setShowVerifyModal(true);
@@ -55,6 +58,48 @@ function CrearCuenta({ onClose }) {
       }
     } catch (err) {
       setError("Error al enviar el correo");
+    }
+  }
+
+  const cambiarCorreo = (e) =>{
+    e.preventDefault();
+    setShowVerifyModal(false);
+  }
+
+  const registrarUsuario = async (e) => {
+    e.preventDefault();
+    setError("");
+    if (verificationCode === generatedCode.toString()) {
+      try {
+        const usuario = {
+          nombreCompleto: nombre,
+          numeroDocumento: documento,
+          sexo: sexo,
+          telefono: countryCode + phone.replace(/\s+/g, ""),
+          correo: email,
+          passwordHash: password
+        }
+
+        const response = await fetch("http://localhost:3000/api/clientes/crear", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(usuario)
+        });
+
+        const data = await response.json();
+
+        if(response.ok){
+          console.log('Usuario registrado');
+          onClose();
+        }else{
+          setError(data.error || "Error al crear usuario");
+        }
+
+      } catch (err) {
+        setError("Error Interno, intente mas tarde.");
+      }
+    } else {
+      setError("El código ingresado es incorrecto");
     }
   }
 
@@ -75,6 +120,8 @@ function CrearCuenta({ onClose }) {
                 <span>Nombre y Apellido</span>
                 <input
                   type="text"
+                  value={nombre}
+                  onChange={ (e) => setNombre(e.target.value)}
                   placeholder="Nombre y Apellido"
                   className="input-field"
                   required
@@ -82,7 +129,10 @@ function CrearCuenta({ onClose }) {
               </label>
               <label className='label-field' style={{width: '25%'}}>
                 <span>Sexo</span>
-                <select className='select-field'>
+                <select className='select-field'
+                value={sexo}
+                onChange={ (e) => setSexo(e.target.value)}
+                required>
                   <option value="F">Femenino</option>
                   <option value="M">Masculino</option>
                 </select>
@@ -110,9 +160,11 @@ function CrearCuenta({ onClose }) {
                 </div>
               </label>
               <label className='label-field'>
-                <span>Nro. Documento</span>
+                <span>Cedula de Identidad</span>
                 <input type="text" 
-                placeholder='Nro. Documento' 
+                value={documento}
+                onChange={ (e) => setDocumento(e.target.value)}
+                placeholder='Cedula de Identidad' 
                 required/>
               </label>
             </div>
@@ -149,27 +201,49 @@ function CrearCuenta({ onClose }) {
       </div>
     ) : (
       <div className="modal-crear-cuenta">
-        <h2>Verificar correo</h2>
-        <p>Ingresa el código que te enviamos al correo</p>
-        <input
-          type="text"
-          placeholder="Código de 6 dígitos"
-          value={verificationCode}
-          onChange={(e) => setVerificationCode(e.target.value)}
-        />
-        <button
-          onClick={() => {
-            if (verificationCode === generatedCode.toString()) {
-              setShowVerifyModal(false);
-            } else {
-              console.log('Error')
-            }
-          }}
-        >
-          Verificar
+        <h2 className='crear-cuenta-title'>Verificar tu correo electrónico</h2>
+        <p className='verificar-descripcion'>Te enviamos un código de seis dígitos a <b style={{color: '#202020'}}>{email}</b>. Ingresa el código a continuación para confirmar tu dirección de correo electrónico.</p>
+        <div className='inputs-container'>
+          {Array.from({ length: 6 }).map((_, index) => (
+            <input
+              key={index}
+              type="text"
+              maxLength="1"
+              inputMode="numeric"
+              style={{
+                width: "40px",
+                height: "40px",
+                textAlign: "center",
+                fontSize: "18px",
+              }}
+              value={verificationCode[index] || ""}
+              onChange={(e) => {
+                let val = e.target.value.replace(/\D/g, "");
+                if (!val) return;
+
+                let newCode = verificationCode.split("");
+                newCode[index] = val;
+                const joined = newCode.join("");
+
+                setVerificationCode(joined);
+
+                if (e.target.nextSibling) {
+                  e.target.nextSibling.focus();
+                }
+              }}
+            />
+          ))}
+        </div>
+        <span className='change-text'>Quieres cambiar tu direccion de correo electronico? <a className='change-link' onClick={cambiarCorreo}>Cambia aqui!</a></span>
+        {error && <p className="error-message">{error}</p>}
+        <button className='btn-verificar'
+          onClick={registrarUsuario}>
+          Verificar correo
         </button>
-        <button onClick={() => setShowVerifyModal(false)}>Cancelar</button>
+
+        <a className='btn-reenviar' onClick={enviarCorreo}>Reenviar código</a>
       </div>
+
     )}
   </div>
 );
