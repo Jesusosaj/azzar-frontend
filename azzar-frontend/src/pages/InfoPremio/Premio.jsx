@@ -1,7 +1,8 @@
 import { useParams } from "react-router-dom";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext} from "react";
 import '../InfoPremio/Premio.css';
 import ps5 from '../../assets/prueba-ps5.png'
+import { CartContext } from "../../context/CarritoContext.jsx";
 
 function Premio() {
   const { nombreId } = useParams();
@@ -9,9 +10,10 @@ function Premio() {
   const [premio, setPremio] = useState(null);
   const [loading, setLoading] = useState(true);
   const [tickets, setTickets] = useState([]);
-  const [selectedTicket, setSelectedTicket] = useState(null); // ticket seleccionado para el menú
+  const [hoveredTicket, setHoveredTicket] = useState(null);
 
-  // Traer tickets del backend
+  const { cart, toggleTicket, setIsCartOpen } = useContext(CartContext);
+
   useEffect(() => {
     const fetchTickets = async () => {
       try {
@@ -25,7 +27,6 @@ function Premio() {
     if (id) fetchTickets();
   }, [id]);
 
-  // Traer datos del premio
   useEffect(() => {
     const fetchPremio = async () => {
       try {
@@ -53,19 +54,22 @@ function Premio() {
   if (loading) return <p>Cargando premio...</p>;
   if (!premio) return <p>No se encontró el premio.</p>;
 
-  // Manejar click en ticket
   const handleTicketClick = (ticket) => {
-    if (ticket.ESTADO === "DISPONIBLE") {
-      setSelectedTicket(ticket);
-    }
+    if (ticket.ESTADO !== "DISPONIBLE") return;
+
+    const ticketsData = {
+      NOMBRE_PREMIO: premio.nombre_premio,
+      ID_RIFA: ticket.ID_RIFA,
+      NOMENCLATURA: ticket.NOMENCLATURA,
+      ESTADO: ticket.ESTADO,
+      PRECIO: ticket.PRECIO_RIFA
+    };
+
+    toggleTicket(ticketsData);
+    setIsCartOpen(true);
   };
 
-  // Función para añadir al carrito
-  const addToCart = () => {
-    console.log("Añadido al carrito:", selectedTicket);
-    // Aquí puedes agregar la lógica para el carrito (localStorage, context, redux, etc.)
-    setSelectedTicket(null);
-  };
+  const isSelected = (ticketId) => cart.some((t) => t.ID_RIFA === ticketId);
 
   return (
     <div>
@@ -100,41 +104,55 @@ function Premio() {
 
       <section className="rifas-container">
         <div className="rifas-container-header">
+          <div className="title-rifas-container">
+            <h3 className="title-rifas">Listado de Rifas</h3>
+          </div>
           <div className="rifas-list">
-            {tickets.map((ticket) => {
-                ticket.ref = ticket.ref || React.createRef(); // crear ref si no existe
+            {tickets.map((ticket, index) => {
+                ticket.ref = ticket.ref || React.createRef();
                 return (
                     <div
                     key={ticket.ID_RIFA}
                     ref={ticket.ref}
-                    className={`ticket ${ticket.ESTADO === "DISPONIBLE" ? "disponible" : "pagado"}`}
+                    className={`ticket 
+                      ${ticket.ESTADO === "DISPONIBLE" ? "disponible" : "pagado"} 
+                      ${isSelected(ticket.ID_RIFA) ? "seleccionado" : ""}
+                    `}
                     onClick={() => handleTicketClick(ticket)}
+                    onMouseEnter={() => setHoveredTicket(ticket)}
+                    onMouseLeave={() => setHoveredTicket(null)}
                     >
-                    <span className="ticket-number">
-                        #{ticket.NOMENCLATURA.toString().padStart(3, "0")}
-                    </span>
+                      <span className="ticket-number">
+                          {ticket.NOMENCLATURA.charAt(0).toUpperCase()}-{index + 1}
+                      </span>
+
+                      {hoveredTicket && hoveredTicket.ID_RIFA === ticket.ID_RIFA && (
+                        <div className="ticket-tooltip">
+                          <p>Rifa #{ticket.NOMENCLATURA}</p>
+                          <p>{ticket.ESTADO}</p>
+                          <p>{Number(ticket.PRECIO_RIFA).toLocaleString('es-PY')}Gs</p>
+                        </div>
+                      )}
                     </div>
                 );
             })}
-
           </div>
-
-          {/* Menú para añadir al carrito */}
-            {selectedTicket && (
-                <div
-                    className="ticket-menu"
-                    style={{
-                    top: `${selectedTicket.ref.current.offsetTop - 70}px`, // arriba del ticket
-                    left: `${selectedTicket.ref.current.offsetLeft + selectedTicket.ref.current.offsetWidth / 2}px`,
-                    transform: "translateX(-50%)"
-                    }}
-                >
-                    <p>Rifa #{selectedTicket.NOMENCLATURA}</p>
-                    <button onClick={addToCart}>Añadir al carrito</button>
-                    <button onClick={() => setSelectedTicket(null)}>Cerrar</button>
-                </div>
-            )}
-
+        </div>
+        <div className="estados-rifas-container">
+          <ul className="estados-rifas-list">
+            <div className="estados-item">
+              <div className="estados-color" style={{background: '#fff', height: '20px', width: '20px'}}></div>
+              <span className="estados-text">Disponible</span>
+            </div>
+            <div className="estados-item">
+              <div className="estados-color" style={{background: '#273657', height: '20px', width: '20px'}}></div>
+              <span className="estados-text">Pagado</span>
+            </div>
+            <div className="estados-item">
+              <div className="estados-color" style={{background: '#202020', height: '20px', width: '20px'}}></div>
+              <span className="estados-text">Seleccionado</span>
+            </div>
+          </ul>
         </div>
       </section>
     </div>
