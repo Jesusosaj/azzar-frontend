@@ -9,6 +9,7 @@ import maquillajes from '../../assets/maquillajes.webp'
 import muebles from '../../assets/muebles.webp'
 import merch from '../../assets/merch.webp'
 import ps5 from '../../assets/prueba-ps5.png'
+import jwt_decode from "jwt-decode";
 
 function Inicio() {
   const items = [
@@ -24,9 +25,29 @@ function Inicio() {
   const [premios, setPremios] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
+  const [participarBtn, setParticiparBtn] = useState(false);
   const itemsPerPage = 8;
 
   useEffect(() => {
+    const estaLogueado = async () => {
+      const token = localStorage.getItem("token");
+      if(token){
+        try {
+          const decoded = jwt_decode(token);
+          if(decoded !== null){
+            setParticiparBtn(true);
+            return;
+          }
+
+          setParticiparBtn(false);
+          return;
+        } catch (err) {
+          setParticiparBtn(false);
+          return;
+        }
+      }
+    };
+
     const fetchPremios = async () => {
       try {
         const res = await fetch("http://localhost:3000/api/premios/listar");
@@ -50,6 +71,7 @@ function Inicio() {
       }
     };
 
+    estaLogueado();
     fetchPremios();
   }, []);
 
@@ -110,9 +132,18 @@ function Inicio() {
                     <span className='premios-descripcion'>
                       {item.descripcion.split(" ").slice(0, 15).join(" ")}{item.descripcion.split(" ").length > 15 ? "..." : ""}
                     </span>
-                   <Link to={`/premio/${item.nombre_premio}+${item.id_premio}`} className='premios-btn'>
-                      Participar
-                    </Link>
+                    {participarBtn ? (
+                      <Link to={`/premio/${item.nombre_premio}+${item.id_premio}`} className='premios-btn'>
+                        Participar
+                      </Link>
+                    ) : (
+                      <Link className='premios-btn blocked'>
+                        Participar
+                        <span className="material-symbols-outlined">
+                          lock
+                        </span>
+                      </Link>
+                    )}
                   </div>
                 ))}
               </div>

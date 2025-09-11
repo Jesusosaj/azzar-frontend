@@ -49,6 +49,7 @@ function Navbar() {
             {usuario ? (
               <>
                 {/* Usuario */}
+                <span className="item-account" onClick={Inicio}>Inicio</span>
                 <div className="usuario-menu-container">
                   <span 
                     className="item-account usuario-trigger"
@@ -94,7 +95,7 @@ function Navbar() {
         <div className="cart-panel">
           <div className="cart-header">
             <h3 className="carrito-title">Mi Carrito</h3>
-            <div className='close-container'>
+            <div className='close-container-carrito'>
                 <button className='close-btn' onClick={() => setIsCartOpen(false)}>
                   <img src={closeIcon} />
                 </button>
@@ -136,7 +137,16 @@ function Navbar() {
                 </div>
               </>
             ) : (
-              <p>Tu carrito está vacío</p>
+              <>
+                <div className="carrito-vacio-container">
+                  <span className="material-symbols-outlined carrito-icon">
+                    shopping_cart
+                  </span>
+                  <span className="carrito-vacio-text">
+                    Tu carrito esta vacio 
+                  </span>
+                </div>
+              </>
             )}
           </div>
         </div>

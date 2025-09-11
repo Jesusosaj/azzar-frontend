@@ -18,19 +18,25 @@
     width: 80%;
     margin: auto;
     height: 100%;
+    padding: 20px;
     align-items: center;
     border-bottom: 1px solid #202020;
     gap: 20px;
 }
 
-.info-container-header-img{
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.info-container-header-img {
+  width: 300px;       /* ancho del card */
+  height: 200px;     /* alto fijo */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff; /* opcional: color de fondo si hay espacios */
 }
 
-.info-container-header-img img{
-    width: 250px;
+.info-container-header-img img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain; /* mantiene la imagen completa sin recortar */
 }
 
 .info-container-header-text{
@@ -100,7 +106,7 @@
 }
 
 .ticket.disponible { background: #ffffff;   border: 1px solid #202020;}
-.ticket.pagado { background: #273657; cursor: not-allowed;  border: 1px solid #273657; color: #fff;}
+.ticket.pagado { background: #ae2f2f; cursor: not-allowed;  border: 1px solid #ae2f2f; color: #fff;}
 .ticket.seleccionado {
   border: 1px solid #202020;
   color: #fff;
@@ -183,8 +189,8 @@
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0px 3px 5px -2px rgba(0,0,0,0.75);
--webkit-box-shadow: 0px 3px 5px -2px rgba(0,0,0,0.75);
--moz-box-shadow: 0px 3px 5px -2px rgba(0,0,0,0.75);
+  -webkit-box-shadow: 0px 3px 5px -2px rgba(0,0,0,0.75);
+  -moz-box-shadow: 0px 3px 5px -2px rgba(0,0,0,0.75);
 }
 
 .estados-item{

@@ -101,13 +101,13 @@
 
 /*Carrito*/
 
-.close-container{
+.close-container-carrito{
     position: absolute;
     right: 5px;
     top: -5px;
 }
 
-.close-btn{
+.close-container-carrito .close-btn{
     background: #202020;
     outline: none;
     border: none;
@@ -249,4 +249,24 @@
   display: flex;
   flex-direction: column;
   position: relative;
+}
+
+.carrito-vacio-container{
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.carrito-icon{
+  color: #d7d7d7;
+  font-size: 64px;
+}
+
+.carrito-vacio-text{
+  color: #d7d7d7;
+  font-size: 20px;
+  font-weight: 500;
 }

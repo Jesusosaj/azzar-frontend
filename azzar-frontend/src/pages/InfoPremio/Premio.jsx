@@ -145,7 +145,7 @@ function Premio() {
               <span className="estados-text">Disponible</span>
             </div>
             <div className="estados-item">
-              <div className="estados-color" style={{background: '#273657', height: '20px', width: '20px'}}></div>
+              <div className="estados-color" style={{background: '#ae2f2f', height: '20px', width: '20px'}}></div>
               <span className="estados-text">Pagado</span>
             </div>
             <div className="estados-item">
