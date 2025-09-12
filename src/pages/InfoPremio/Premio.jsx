@@ -64,7 +64,7 @@ function Premio() {
 
     const ticketsData = {
        NOMBRE_PREMIO: premio.nombre_premio,
-    ID_RIFA: ticket.id, 
+    ID_RIFA: ticket.id, // <- usar la propiedad real
     NOMENCLATURA: ticket.numero,
     ESTADO: ticket.estado,
     PRECIO: premio.precio_ticket, 
@@ -76,6 +76,7 @@ function Premio() {
 
   const isSelected = (ticketId) => {
    return cart.some((t) => t.ID_RIFA === ticketId);
+   console.log("ticketId: ",ticketId, "id: ", id);
   }
   const handleMouseEnter = (ticket, e) => {
     setHoveredTicket(ticket);
