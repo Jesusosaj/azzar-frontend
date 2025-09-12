@@ -78,18 +78,55 @@
 }
 
 .ticket {
-  background: #949494;
   color: #fff;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 12px;
   padding: 10px;
   border-radius: 12px;
-  width: 70px;
+  width: 75px;
   text-align: center;
   position: relative;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
+
+.ticket:hover{
+  transform: scale(1.1);
+}
+
+.ticket.disponible { background: #1b8a1d; } /* verde */
+.ticket.pagado { background: #c0392b; cursor: not-allowed; } /* rojo */
+
+.ticket-menu {
+  position: absolute;
+  background: #fff;
+  padding: 12px 15px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  z-index: 20;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.ticket-menu::after {
+  content: '';
+  position: absolute;
+  bottom: -10px; /* coloca la flecha abajo de la burbuja */
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 10px 10px 0 10px;
+  border-style: solid;
+  border-color: #fff transparent transparent transparent;
+}
+.ticket-menu button {
+  margin: 5px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+
 
 /* efecto agujeros laterales tipo boleto */
 .ticket::before,

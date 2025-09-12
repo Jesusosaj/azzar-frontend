@@ -1,14 +1,16 @@
 import { Link } from "react-router-dom";
-import "../Inicio/Inicio.css";
-import consolas from "../../assets/consolas.webp";
-import auriculares from "../../assets/auriculares.webp";
-import electrodomesticos from "../../assets/electrodomesticos.webp";
-import tecnologia from "../../assets/tecnologia.webp";
-import maquillajes from "../../assets/maquillajes.webp";
-import muebles from "../../assets/muebles.webp";
-import merch from "../../assets/merch.webp";
-import ps5 from "../../assets/prueba-ps5.png";
 import { useEffect, useState } from "react";
+import '../Inicio/Inicio.css'
+import { useAuth } from "../../context/AuthContext"; 
+import consolas from '../../assets/consolas.webp'
+import auriculares from '../../assets/auriculares.webp'
+import electrodomesticos from '../../assets/electrodomesticos.webp'
+import tecnologia from '../../assets/tecnologia.webp'
+import maquillajes from '../../assets/maquillajes.webp'
+import muebles from '../../assets/muebles.webp'
+import merch from '../../assets/merch.webp'
+import ps5 from '../../assets/prueba-ps5.png'
+import jwt_decode from "jwt-decode";
 
 function Inicio() {
   const items = [
@@ -18,42 +20,59 @@ function Inicio() {
     { img: merch, title: "Merchandising" },
     { img: electrodomesticos, title: "Electrodomésticos" },
     { img: tecnologia, title: "Tecnologia" },
-    { img: muebles, title: "Muebles" },
+    { img: muebles, title: "Muebles" }
   ];
 
+  const { isAuthenticated } = useAuth();
   const [premios, setPremios] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
+  const itemsPerPage = 8;
 
   useEffect(() => {
     const fetchPremios = async () => {
       try {
-        const response = await fetch("http://localhost:8080/v1/sorteo/premios");
-        if (!response.ok) throw new Error("Error al obtener los premios");
-        const data = await response.json();
+        const res = await fetch("http://localhost:8080/v1/sorteo/premios");
+        const data = await res.json();
 
-        // Normaliza los campos para el render
-        const list = Array.isArray(data) ? data : (data?.data || data?.results || []);
-        const normalizados = list.map((p) => ({
-          id: p.id,
-          titulo: p.nombre ?? p.premio ?? "Sin título",
-          descripcion: p.descripcion ?? "",
-          imagenUrl: p.imagen ?? p.img ?? "",
-          precio: p.precio_ticket ?? p.precio ?? 0,
+        const premios = data.map(p => ({
+          id_premio: p.id,
+          nombre_premio: p.nombre,
+          descripcion: p.descripcion,
+          fecha_sorteo: p.fecha_sorteo,
+          precio_ticket: p.precio,
+          imagen: p.imagen || ps5,
+          estado: p.estado,
+          fecha_creacion: p.fecha_creacion,
+          title: p.nombre
         }));
 
-        setPremios(normalizados);
+        setPremios(premios);
       } catch (err) {
-        console.error(err);
+        console.error("Error al cargar premios:", err);
       }
     };
 
     fetchPremios();
   }, []);
 
+  const filteredPremios = premios.filter(p =>
+    p.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentPremios = filteredPremios.slice(indexOfFirstItem, indexOfLastItem);
+
+  const totalPages = Math.ceil(filteredPremios.length / itemsPerPage);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
   return (
     <div>
       <section className="inicio-container">
-        <div className="inicio-container-header">
-          <div className="inicio-container-header-collage">
+        <div className='inicio-container-header'>
+          <div className='inicio-container-header-collage'>
             {items.map((item, index) => (
               <div key={index} className={`collage-item size${index + 1}`}>
                 <img src={item.img} alt={item.title} className="collage-img" />
@@ -61,46 +80,65 @@ function Inicio() {
               </div>
             ))}
           </div>
-          <div className="inicio-container-header-info">
-            <h3 className="inicio-container-header-info-h3">Gana premios</h3>
-            <h2 className="inicio-container-header-info-h2">¡Compra tus rifas!</h2>
+          <div className='inicio-container-header-info'>
+            <h3 className='inicio-container-header-info-h3'>Gana premios</h3>
+            <h2 className='inicio-container-header-info-h2'>Compra tus rifas!</h2>
           </div>
         </div>
       </section>
 
-      <section className="premios-container">
-        <div className="premios-container-header">
-          <h2 className="premios-container-header-h2">Premios</h2>
-          <div className="premios-container-main">
-            <div className="premios-container-main-search">
-              <div className="search-container">
-                <input type="text" placeholder="Buscar premio..." />
+      <section className='premios-container'>
+        <div className='premios-container-header'>
+          <h2 className='premios-container-header-h2'>Premios</h2>
+          <div className='premios-container-main'>
+            <div className='premios-container-main-search'>
+              <div className='search-container'>
+                <input
+                  type="text"
+                  placeholder='Buscar premio...'
+                  value={searchTerm}
+                  onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+                />
               </div>
             </div>
-
-            <div className="premios-container-main-list">
-              <div className="premios-container-main-list-content">
-                {premios.map((item) => (
-                  <div key={item.id ?? item.titulo} className="premios-item">
-                    <img src={item.imagen || ps5} alt={item.titulo} />
-                    <span className="premios-precio">Gs {item.precio}</span>
-                    <span className="premios-title">{item.titulo}</span>
-                    <span className="premios-descripcion">{item.descripcion}</span>
-                    <Link to={`/premio/${encodeURIComponent(item.id)}`} className="premios-btn">
-                      Participar
-                    </Link>
+            <div className='premios-container-main-list'>
+              <div className='premios-container-main-list-content'>
+                {currentPremios.map((item, index) => (
+                  <div key={index} className='premios-item'>
+                    <div className="premios-img-container">
+                      <img src={item.imagen} alt={item.title} />
+                    </div>
+                    <span className='premios-precio'>Gs {Number(item.precio_ticket).toLocaleString('es-PY')}</span>
+                    <span className='premios-title'>{item.title}</span>
+                    <span className='premios-descripcion'>
+                      {item.descripcion.split(" ").slice(0, 15).join(" ")}{item.descripcion.split(" ").length > 15 ? "..." : ""}
+                    </span>
+                    {isAuthenticated ? (
+                      <Link to={`/premio/${item.nombre_premio}+${item.id_premio}`} className='premios-btn'>
+                        Participar
+                      </Link>
+                    ) : (
+                      <Link className='premios-btn blocked'>
+                        Participar
+                        <span className="material-symbols-outlined">
+                          lock
+                        </span>
+                      </Link>
+                    )}
                   </div>
                 ))}
               </div>
             </div>
-
-            <div className="premios-container-main-paginas">
-              <button className="active">1</button>
-              <button>2</button>
-              <button>3</button>
-              <button>4</button>
-              <button>5</button>
-              <button>{">"}</button>
+            <div className='premios-container-main-paginas'>
+              {Array.from({ length: totalPages }, (_, i) => (
+                <button
+                  key={i + 1}
+                  onClick={() => paginate(i + 1)}
+                  className={currentPage === i + 1 ? "active" : ""}
+                >
+                  {i + 1}
+                </button>
+              ))}
             </div>
           </div>
         </div>

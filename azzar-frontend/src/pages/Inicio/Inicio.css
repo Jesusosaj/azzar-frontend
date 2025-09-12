@@ -188,15 +188,21 @@
   gap: 7px;
 }
 
-.premios-item img {
-  width: 80%;
-  border-radius: 8px;
-  margin-bottom: 10px;
+.premios-img-container {
+  width: 100%;       /* ancho del card */
+  height: 200px;     /* alto fijo */
   display: flex;
   justify-content: center;
   align-items: center;
-  text-align: center;
+  background-color: #fff; /* opcional: color de fondo si hay espacios */
 }
+
+.premios-img-container img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain; /* mantiene la imagen completa sin recortar */
+}
+
 
 .premios-precio{
   text-align: start;
@@ -209,7 +215,7 @@
   text-align: start;
   font-weight: 700;
   color: #202020;
-  font-size: 22px;
+  font-size: 20px;
 }
 
 .premios-descripcion{
