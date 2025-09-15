@@ -1,10 +1,8 @@
 import './css/IniciarSesion.css';
 import closeIcon from '../assets/svg/close.svg';
 import { useState } from 'react';
-import { useAuth } from "../context/AuthContext"; 
 
 function IniciarSesion({ onClose }) {
-  const { login } = useAuth();
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -31,7 +29,7 @@ function IniciarSesion({ onClose }) {
     try {
       const usuario = { correo: email, password: password };
 
-      const response = await fetch("http://localhost:8080/v1/sorteo/clientes/login", {
+      const response = await fetch("http://localhost:3000/api/clientes/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(usuario)
@@ -40,9 +38,9 @@ function IniciarSesion({ onClose }) {
       const data = await response.json();
 
       if(response.ok){
-        localStorage.setItem("token", data.body.token);
-        login(data.body.token); 
+        localStorage.setItem("token", data.token);
         onClose();
+        window.location.reload();
       }else{
         setError(data.error || "Error al iniciar sesión");  
       }

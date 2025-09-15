@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import '../Inicio/Inicio.css'
-import { useAuth } from "../../context/AuthContext"; 
 import consolas from '../../assets/consolas.webp'
 import auriculares from '../../assets/auriculares.webp'
 import electrodomesticos from '../../assets/electrodomesticos.webp'
@@ -23,7 +22,6 @@ function Inicio() {
     { img: muebles, title: "Muebles" }
   ];
 
-  const { isAuthenticated } = useAuth();
   const [premios, setPremios] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
@@ -52,19 +50,19 @@ function Inicio() {
 
     const fetchPremios = async () => {
       try {
-        const res = await fetch("http://localhost:8080/v1/sorteo/premios");
+        const res = await fetch("http://localhost:3000/api/premios/listar");
         const data = await res.json();
 
         const premios = data.map(p => ({
-          id_premio: p.id,
-          nombre_premio: p.nombre,
+          id_premio: p.id_premio,
+          nombre_premio: p.nombre_premio,
           descripcion: p.descripcion,
           fecha_sorteo: p.fecha_sorteo,
-          precio_ticket: p.precio,
+          precio_ticket: p.precio_ticket,
           imagen: p.imagen || ps5,
           estado: p.estado,
           fecha_creacion: p.fecha_creacion,
-          title: p.nombre
+          title: p.nombre_premio
         }));
 
         setPremios(premios);
@@ -134,7 +132,7 @@ function Inicio() {
                     <span className='premios-descripcion'>
                       {item.descripcion.split(" ").slice(0, 15).join(" ")}{item.descripcion.split(" ").length > 15 ? "..." : ""}
                     </span>
-                    {isAuthenticated ? (
+                    {participarBtn ? (
                       <Link to={`/premio/${item.nombre_premio}+${item.id_premio}`} className='premios-btn'>
                         Participar
                       </Link>

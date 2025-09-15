@@ -203,29 +203,3 @@
   font-weight: 500;
   color: #202020;
 }
-
-.ticket.available:hover {
-  background-color: #d4edff;
-  transform: scale(1.05);
-  cursor: pointer;
-}
-
-.ticket.sold {
-  background-color: #8f2029;
-  border-color: #921522;
-  opacity: 0.7;
-}
-
-.ticket.sold:hover {
-  cursor: not-allowed;
-  transform: none;
-}
-
-.sold-badge {
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  font-size: 0.6rem;
-  color: #921522;
-  font-weight: bold;
-}

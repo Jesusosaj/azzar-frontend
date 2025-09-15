@@ -73,14 +73,14 @@ function CrearCuenta({ onClose }) {
       try {
         const usuario = {
           nombreCompleto: nombre,
-          nroDocumento: documento,
+          numeroDocumento: documento,
           sexo: sexo,
           telefono: countryCode + phone.replace(/\s+/g, ""),
           correo: email,
-          password: password
+          passwordHash: password
         }
-        console.log(JSON.stringify(usuario));
-        const response = await fetch("http://localhost:8080/v1/sorteo/clientes/register", {
+
+        const response = await fetch("http://localhost:3000/api/clientes/crear", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(usuario)
@@ -196,7 +196,7 @@ function CrearCuenta({ onClose }) {
           </label>
 
           {error && <p className="error-message">{error}</p>}
-          <button className="registrar-btn" onClick={registrarUsuario}>Registrar</button>
+          <button className="registrar-btn" onClick={enviarCorreo}>Registrar</button>
         </form>
       </div>
     ) : (
