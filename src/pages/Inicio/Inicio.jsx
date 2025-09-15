@@ -27,29 +27,9 @@ function Inicio() {
   const [premios, setPremios] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
-  const [participarBtn, setParticiparBtn] = useState(false);
   const itemsPerPage = 8;
 
   useEffect(() => {
-    const estaLogueado = async () => {
-      const token = localStorage.getItem("token");
-      if(token){
-        try {
-          const decoded = jwt_decode(token);
-          if(decoded !== null){
-            setParticiparBtn(true);
-            return;
-          }
-
-          setParticiparBtn(false);
-          return;
-        } catch (err) {
-          setParticiparBtn(false);
-          return;
-        }
-      }
-    };
-
     const fetchPremios = async () => {
       try {
         const res = await fetch("http://localhost:8080/v1/sorteo/premios");
@@ -73,7 +53,6 @@ function Inicio() {
       }
     };
 
-    estaLogueado();
     fetchPremios();
   }, []);
 

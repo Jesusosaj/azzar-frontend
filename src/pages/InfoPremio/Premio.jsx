@@ -63,11 +63,11 @@ function Premio() {
     if (ticket.estado !== 0) return;
 
     const ticketsData = {
-      NOMBRE_PREMIO: premio.nombre_premio,
-      ID_RIFA: ticket.id, 
-      NOMENCLATURA: ticket.numero,
-      ESTADO: ticket.estado,
-      PRECIO: premio.precio_ticket, 
+       NOMBRE_PREMIO: premio.nombre_premio,
+    ID_RIFA: ticket.id, // <- usar la propiedad real
+    NOMENCLATURA: ticket.numero,
+    ESTADO: ticket.estado,
+    PRECIO: premio.precio_ticket, 
     };
     console.log("ticket seleccionado: ", ticketsData);
     toggleTicket(ticketsData);
@@ -76,6 +76,7 @@ function Premio() {
 
   const isSelected = (ticketId) => {
    return cart.some((t) => t.ID_RIFA === ticketId);
+   console.log("ticketId: ",ticketId, "id: ", id);
   }
   const handleMouseEnter = (ticket, e) => {
     setHoveredTicket(ticket);
