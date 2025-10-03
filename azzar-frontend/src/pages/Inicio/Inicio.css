@@ -110,9 +110,9 @@
 
 
 
-/* Premios */
+/* Eventos */
 
-.premios-container{
+.eventos-container{
   width: 100%;
   min-height: 80vh;
   z-index: 5;
@@ -124,7 +124,7 @@
   background-size: cover;
 }
 
-.premios-container-header{
+.eventos-container-header{
   width: 80%;
   margin: auto;
   display: flex;
@@ -133,8 +133,8 @@
   padding: 20px 0;
 }
 
-.premios-container-header-h2{
-  font-size: 24px;
+.eventos-container-header-h2{
+  font-size: 20px;
   font-weight: 700;
   background: linear-gradient(90deg, #232323, #000000);
   -webkit-background-clip: text;
@@ -142,155 +142,70 @@
   margin: 0;
 }
 
-.premios-container-main{
+.eventos-container-main{
   display: flex;
   flex-direction: column;
 }
 
-.premios-container-main-search{
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 40px;
-}
-
-.search-container{
-  width: 300px;
-}
-
-.search-container input{
-  padding: 9px 14px;
-  font-family: 'Poppins' sans-serif;
-  font-size: 14px;
-  background: #ffffff;
-  border: 1px solid #202020;
-  width: 100%;
-  border-radius: 10px;
-  outline: none
-}
-
-.premios-container-main-list{
+.eventos-container-main-list{
   margin-top: 50px;
 }
 
 /* Items de premios */
-.premios-item {
-  background: #ffffff;
+.eventos-item {
+  background: #fff;
   border: 1px solid #ddd;
   border-radius: 12px;
-  padding: 15px;
-  max-width: 275px;
-  max-height: 440px;
   display: flex;
   flex-direction: column;
   transition: transform 0.3s;
   cursor: pointer;
   gap: 7px;
-}
-
-.premios-img-container {
-  width: 100%;       /* ancho del card */
-  height: 200px;     /* alto fijo */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #fff; /* opcional: color de fondo si hay espacios */
-}
-
-.premios-img-container img {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain; /* mantiene la imagen completa sin recortar */
-}
-
-
-.premios-precio{
-  text-align: start;
-  font-weight: 400;
-  color: #202020;
-  font-size: 14px;
-}
-
-.premios-title{
-  text-align: start;
-  font-weight: 700;
-  color: #202020;
-  font-size: 20px;
-}
-
-.premios-descripcion{
-  text-align: start;
-  font-weight: 400;
-  color: #202020;
-  font-size: 12px;
-}
-
-.premios-btn{
-  background-color: transparent;
-  border: 1px solid #202020;
-  padding: 7px;
-  text-align: center;
-  font-weight: 500;
-  border-radius: 20px;
-  margin: 10px 0;
-  color: #202020;
   text-decoration: none;
 }
 
-.premios-btn:hover{
-  background-color: #202020;
-  border: 1px solid #fff;
-  color: #fff;
-  cursor: pointer;
-}
-
-.premios-btn.blocked{
-  background-color: #f2f2f2;
-  border: none;
-  color: #7f7f7f;
+.eventos-img-container {
+  width: 350px;
   display: flex;
-  gap: 5px;
   justify-content: center;
   align-items: center;
+  background-color: #fff;
 }
 
-.premios-item:hover {
+.eventos-img-container img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 10px 10px 0 0;
+}
+
+.eventos-item:hover {
   transform: translateY(-5px);
 }
 
+.eventos-item-text{
+  padding: 20px;
+}
+
+.eventos-item-title {
+  color: #202020;
+  font-size: 18px;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.eventos-item-ubicacion {
+  color: #202020;
+  font-size: 12px;
+  text-decoration: none;
+  font-weight: 300;
+}
+
 /* Lista de items */
-.premios-container-main-list-content {
+.eventos-container-main-list-content {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
   justify-content: flex-start;
 }
 
-/* Paginador */
-.premios-container-main-paginas {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-  gap: 10px;
-}
-
-.premios-container-main-paginas button {
-  background: #ffffff;
-  border: 1px solid #202020;
-  color: #202020;
-  padding: 8px 14px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s;
-}
-
-.premios-container-main-paginas button:hover {
-  background: #202020;
-  color: #ffffff;
-}
-
-.premios-container-main-paginas button.active {
-  background: #202020;
-  color: #ffffff;
-}

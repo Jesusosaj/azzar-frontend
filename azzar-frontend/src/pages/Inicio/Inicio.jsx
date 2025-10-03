@@ -8,8 +8,6 @@ import tecnologia from '../../assets/tecnologia.webp'
 import maquillajes from '../../assets/maquillajes.webp'
 import muebles from '../../assets/muebles.webp'
 import merch from '../../assets/merch.webp'
-import ps5 from '../../assets/prueba-ps5.png'
-import jwt_decode from "jwt-decode";
 
 function Inicio() {
   const items = [
@@ -22,70 +20,52 @@ function Inicio() {
     { img: muebles, title: "Muebles" }
   ];
 
-  const [premios, setPremios] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [participarBtn, setParticiparBtn] = useState(false);
-  const itemsPerPage = 8;
+  const [eventos, setEventos] = useState([]);
+  const [empresas, setEmpresas] = useState([]);
 
   useEffect(() => {
-    const estaLogueado = async () => {
-      const token = localStorage.getItem("token");
-      if(token){
-        try {
-          const decoded = jwt_decode(token);
-          if(decoded !== null){
-            setParticiparBtn(true);
-            return;
-          }
+    const fetchEmpresas = async () => {
+      try {
+        const res = await fetch("http://localhost:8080/v1/azzar/empresas-afiliadas");
+        const data = await res.json();
+        const ahora = new Date();
 
-          setParticiparBtn(false);
-          return;
-        } catch (err) {
-          setParticiparBtn(false);
-          return;
-        }
+        const empresas = data
+          .filter(p => new Date(p.fechaHastaAlquiler) >= ahora)
+          .map(p => ({
+            id_empresa: p.idEmpresa,
+            nombre_empresa: p.nombreEmpresa,
+            fechaHasta: p.fechaHastaAlquiler
+          }));
+
+        setEmpresas(empresas);
+      } catch (err) {
+        console.error("Error al cargar las empresas:", err);
       }
     };
 
-    const fetchPremios = async () => {
+    const fetchEventos = async () => {
       try {
-        const res = await fetch("http://localhost:3000/api/premios/listar");
+        const res = await fetch("http://localhost:8080/v1/azzar/eventos");
         const data = await res.json();
 
-        const premios = data.map(p => ({
-          id_premio: p.id_premio,
-          nombre_premio: p.nombre_premio,
-          descripcion: p.descripcion,
-          fecha_sorteo: p.fecha_sorteo,
-          precio_ticket: p.precio_ticket,
-          imagen: p.imagen || ps5,
-          estado: p.estado,
-          fecha_creacion: p.fecha_creacion,
-          title: p.nombre_premio
+        const eventos = data.map(p => ({
+          id_evento: p.idEvento,
+          id_empresa: p.idEmpresa,
+          nombre_evento: p.nombreEvento,
+          ubicacion: p.ubicacionEvento,
+          imagen: p.imagenFlyer ? `data:image/jpeg;base64,${p.imagenFlyer}` : "",
+          fecha_registro: p.fechaRegistro,
         }));
-
-        setPremios(premios);
+        setEventos(eventos);
       } catch (err) {
-        console.error("Error al cargar premios:", err);
+        console.error("Error al cargar eventos:", err);
       }
     };
 
-    estaLogueado();
-    fetchPremios();
+    fetchEmpresas();
+    fetchEventos();
   }, []);
-
-  const filteredPremios = premios.filter(p =>
-    p.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentPremios = filteredPremios.slice(indexOfFirstItem, indexOfLastItem);
-
-  const totalPages = Math.ceil(filteredPremios.length / itemsPerPage);
-
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
     <div>
@@ -106,58 +86,26 @@ function Inicio() {
         </div>
       </section>
 
-      <section className='premios-container'>
-        <div className='premios-container-header'>
-          <h2 className='premios-container-header-h2'>Premios</h2>
-          <div className='premios-container-main'>
-            <div className='premios-container-main-search'>
-              <div className='search-container'>
-                <input
-                  type="text"
-                  placeholder='Buscar premio...'
-                  value={searchTerm}
-                  onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                />
-              </div>
-            </div>
-            <div className='premios-container-main-list'>
-              <div className='premios-container-main-list-content'>
-                {currentPremios.map((item, index) => (
-                  <div key={index} className='premios-item'>
-                    <div className="premios-img-container">
-                      <img src={item.imagen} alt={item.title} />
-                    </div>
-                    <span className='premios-precio'>Gs {Number(item.precio_ticket).toLocaleString('es-PY')}</span>
-                    <span className='premios-title'>{item.title}</span>
-                    <span className='premios-descripcion'>
-                      {item.descripcion.split(" ").slice(0, 15).join(" ")}{item.descripcion.split(" ").length > 15 ? "..." : ""}
-                    </span>
-                    {participarBtn ? (
-                      <Link to={`/premio/${item.nombre_premio}+${item.id_premio}`} className='premios-btn'>
-                        Participar
-                      </Link>
-                    ) : (
-                      <Link className='premios-btn blocked'>
-                        Participar
-                        <span className="material-symbols-outlined">
-                          lock
-                        </span>
-                      </Link>
-                    )}
-                  </div>
+      <section className='eventos-container'>
+        <div className='eventos-container-header'>
+          <h2 className='eventos-container-header-h2'>Ultimos eventos</h2>
+          <div className='eventos-container-main'>
+            <div className='eventos-container-main-list'>
+              <div className='eventos-container-main-list-content'>
+                {eventos.map((item, index) => (
+                  <Link to={`/${item.nombre_evento}+${item.id_evento}`} key={index} className="eventos-item">
+                   
+                      <div className="eventos-img-container">
+                        <img src={item.imagen} alt={item.nombre_evento} />
+                      </div>
+                      <div className="eventos-item-text">
+                        <h3 className="eventos-item-title">{item.nombre_evento}</h3>
+                        <span className="eventos-item-ubicacion">{item.ubicacion}</span>
+                      </div>
+
+                  </Link>
                 ))}
               </div>
-            </div>
-            <div className='premios-container-main-paginas'>
-              {Array.from({ length: totalPages }, (_, i) => (
-                <button
-                  key={i + 1}
-                  onClick={() => paginate(i + 1)}
-                  className={currentPage === i + 1 ? "active" : ""}
-                >
-                  {i + 1}
-                </button>
-              ))}
             </div>
           </div>
         </div>

@@ -46,16 +46,16 @@ function Navbar() {
         <div className="navbar-container">
           <h1 className="navbar-logo cursor-pointer" onClick={Inicio}>Azzar</h1>
           <div className="navbar-links">
+            <span className="item-account" onClick={Inicio}>Inicio</span>
             {usuario ? (
               <>
                 {/* Usuario */}
-                <span className="item-account" onClick={Inicio}>Inicio</span>
                 <div className="usuario-menu-container">
                   <span 
                     className="item-account usuario-trigger"
                     onClick={() => setMenuOpen(!menuOpen)}
                   >
-                    {usuario.nombreCompleto}
+                    {usuario.nombreCliente}
                     <span className="material-symbols-outlined icono">
                       arrow_drop_down
                     </span>

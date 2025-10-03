@@ -82,6 +82,9 @@
 .title-rifas-container {
   position: relative;
   top: -30px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
 
 .rifas-list {
@@ -174,10 +177,7 @@
 }
 
 .estados-rifas-container {
-  position: fixed;
-  bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%);
+  position: relative;
   display: flex;
   gap: 10px;
 }
@@ -186,11 +186,8 @@
   display: flex;
   gap: 10px;
   background-color: #f2f2f2;
-  padding: 20px;
+  padding: 10px;
   border-radius: 10px;
-  box-shadow: 0px 3px 5px -2px rgba(0,0,0,0.75);
-  -webkit-box-shadow: 0px 3px 5px -2px rgba(0,0,0,0.75);
-  -moz-box-shadow: 0px 3px 5px -2px rgba(0,0,0,0.75);
 }
 
 .estados-item{

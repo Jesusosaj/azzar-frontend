@@ -1,7 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar.jsx";
 import Inicio from "./pages/Inicio/Inicio.jsx";
-import Premio from "./pages/InfoPremio/Premio.jsx";
+import InfoPremio from "./pages/InfoPremio/InfoPremio.jsx";
+import Premio from "./pages/Premios/Premio.jsx";
 
 function App() {
   return (
@@ -10,7 +11,8 @@ function App() {
       <main>
         <Routes>
           <Route path="/" element={<Inicio />} />
-          <Route path="/premio/:nombreId" element={<Premio />} /> 
+          <Route path="/:eventoId" element={<Premio />} /> 
+          <Route path="/:eventoId/:nombreId" element={<InfoPremio />} /> 
         </Routes>
       </main>
     </Router>

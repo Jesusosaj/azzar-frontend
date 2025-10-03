@@ -17,6 +17,8 @@ function IniciarSesion({ onClose }) {
   const [modalVerificarCorreo, setModalVerificarCorreo] = useState(false);
   const [modalCambiarPassword, setModalCambiarPassword] = useState(false);
 
+  const [loading, setLoading] = useState(false);
+
   const cambiarCorreo = (e) =>{
     e.preventDefault();
     setModalCargarCorreo(true);
@@ -25,20 +27,20 @@ function IniciarSesion({ onClose }) {
 
   const iniciarSesion = async (e) => {
     e.preventDefault();
-
+    setLoading(true);
     try {
-      const usuario = { correo: email, password: password };
+      const usuario = { correo: email, contrasena: password };
 
-      const response = await fetch("http://localhost:3000/api/clientes/login", {
+      const response = await fetch("http://localhost:8080/v1/azzar/clientes/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(usuario)
       });
 
-      const data = await response.json();
+      const data = await response.text();
 
       if(response.ok){
-        localStorage.setItem("token", data.token);
+        localStorage.setItem("token", data);
         onClose();
         window.location.reload();
       }else{
@@ -46,15 +48,17 @@ function IniciarSesion({ onClose }) {
       }
     } catch (err) {
       setError("Error interno, intente más tarde.");
+    } finally {
+      setLoading(false);
     }
   }
 
   const enviarCorreo = async (e) =>{
     e.preventDefault();
     setError("");
-
+    setLoading(true);
     try {
-      const response = await fetch("http://localhost:3000/api/verificacion/enviar-codigo", {
+      const response = await fetch("http://localhost:8080/v1/azzar/clientes/enviar-correo", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ correo: email })
@@ -71,6 +75,8 @@ function IniciarSesion({ onClose }) {
       }
     } catch (err) {
       setError("Error al enviar el correo");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -83,9 +89,6 @@ function IniciarSesion({ onClose }) {
   const verificarCodigo = (e) => {
     e.preventDefault();
 
-    console.log(verificationCode);
-
-    console.log(generatedCode);
     if(verificationCode !== generatedCode){
       console.log("codigos erroneos");
     }
@@ -164,7 +167,7 @@ function IniciarSesion({ onClose }) {
             </a>
             {error && <p className="error-message">{error}</p>}
             <button className='submit-btn' type='submit'>
-              Iniciar sesión
+              {loading ? <span className="spinner"></span> : "Iniciar sesión"}
             </button>
           </form>
         </div>
@@ -191,7 +194,7 @@ function IniciarSesion({ onClose }) {
               />
             </label>
             <button className='submit-btn' type='submit'>
-              Enviar código
+              {loading ? <span className="spinner"></span> : "Enviar código"}
             </button>
           </form>
         </div>

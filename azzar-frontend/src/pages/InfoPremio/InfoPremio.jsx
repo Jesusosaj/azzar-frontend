@@ -1,10 +1,9 @@
 import { useParams } from "react-router-dom";
 import React, { useEffect, useState, useContext} from "react";
-import '../InfoPremio/Premio.css';
-import ps5 from '../../assets/prueba-ps5.png'
+import '../InfoPremio/InfoPremio.css';
 import { CartContext } from "../../context/CarritoContext.jsx";
 
-function Premio() {
+function InfoPremio() {
   const { nombreId } = useParams();
   const [nombre, id] = nombreId ? nombreId.split('+') : ["", ""];
   const [premio, setPremio] = useState(null);
@@ -17,7 +16,7 @@ function Premio() {
   useEffect(() => {
     const fetchTickets = async () => {
       try {
-        const res = await fetch(`http://localhost:3000/api/rifas/premio/${id}`);
+        const res = await fetch(`http://localhost:8080/v1/azzar/rifas/premio/${id}`);
         const data = await res.json();
         setTickets(data);
       } catch (err) {
@@ -30,17 +29,18 @@ function Premio() {
   useEffect(() => {
     const fetchPremio = async () => {
       try {
-        const res = await fetch(`http://localhost:3000/api/premios/${id}`);
+        const res = await fetch(`http://localhost:8080/v1/azzar/premios/${id}`);
         const data = await res.json();
         setPremio({
-          id_premio: data.id_premio,
-          nombre_premio: data.nombre_premio,
+          id_premio: data.idPremio,
+          id_evento: data.idEvento,
+          nombre_premio: data.nombrePremio,
           descripcion: data.descripcion,
-          fecha_sorteo: data.fecha_sorteo,
-          precio_ticket: data.precio_ticket,
-          imagen: data.imagen || ps5,
+          fecha_sorteo: data.fechaSorteo,
+          precio_ticket: data.precioRifa,
+          imagen: data.imagen ? `data:image/jpeg;base64,${data.imagen}` : "",
           estado: data.estado,
-          fecha_creacion: data.fecha_creacion,
+          fecha_creacion: data.fechaCreacion,
         });
       } catch (err) {
         console.error("Error al cargar premio:", err);
@@ -55,14 +55,14 @@ function Premio() {
   if (!premio) return <p>No se encontró el premio.</p>;
 
   const handleTicketClick = (ticket) => {
-    if (ticket.ESTADO !== "DISPONIBLE") return;
+    if (ticket.estadoRifa !== 1) return;
 
     const ticketsData = {
       NOMBRE_PREMIO: premio.nombre_premio,
-      ID_RIFA: ticket.ID_RIFA,
-      NOMENCLATURA: ticket.NOMENCLATURA,
-      ESTADO: ticket.ESTADO,
-      PRECIO: ticket.PRECIO_RIFA
+      ID_RIFA: ticket.idRifa,
+      NOMENCLATURA: ticket.numeroRifa,
+      ESTADO: ticket.estadoRifa,
+      PRECIO: premio.precio_ticket
     };
 
     toggleTicket(ticketsData);
@@ -106,31 +106,47 @@ function Premio() {
         <div className="rifas-container-header">
           <div className="title-rifas-container">
             <h3 className="title-rifas">Listado de Rifas</h3>
+            <div className="estados-rifas-container">
+              <ul className="estados-rifas-list">
+                <div className="estados-item">
+                  <div className="estados-color" style={{background: '#fff', height: '20px', width: '20px'}}></div>
+                  <span className="estados-text">Disponible</span>
+                </div>
+                <div className="estados-item">
+                  <div className="estados-color" style={{background: '#ae2f2f', height: '20px', width: '20px'}}></div>
+                  <span className="estados-text">Pagado</span>
+                </div>
+                <div className="estados-item">
+                  <div className="estados-color" style={{background: '#202020', height: '20px', width: '20px'}}></div>
+                  <span className="estados-text">Seleccionado</span>
+                </div>
+              </ul>
+            </div>
           </div>
           <div className="rifas-list">
             {tickets.map((ticket, index) => {
                 ticket.ref = ticket.ref || React.createRef();
                 return (
                     <div
-                    key={ticket.ID_RIFA}
+                    key={ticket.idRifa}
                     ref={ticket.ref}
                     className={`ticket 
-                      ${ticket.ESTADO === "DISPONIBLE" ? "disponible" : "pagado"} 
-                      ${isSelected(ticket.ID_RIFA) ? "seleccionado" : ""}
+                      ${ticket.estadoRifa === 1 ? "disponible" : "pagado"} 
+                      ${isSelected(ticket.idRifa) ? "seleccionado" : ""}
                     `}
                     onClick={() => handleTicketClick(ticket)}
                     onMouseEnter={() => setHoveredTicket(ticket)}
                     onMouseLeave={() => setHoveredTicket(null)}
                     >
                       <span className="ticket-number">
-                          {ticket.NOMENCLATURA.charAt(0).toUpperCase()}-{index + 1}
+                          {ticket.numeroRifa.charAt(0).toUpperCase()}-{index + 1}
                       </span>
 
-                      {hoveredTicket && hoveredTicket.ID_RIFA === ticket.ID_RIFA && (
+                      {hoveredTicket && hoveredTicket.idRifa === ticket.idRifa && (
                         <div className="ticket-tooltip">
-                          <p>Rifa #{ticket.NOMENCLATURA}</p>
-                          <p>{ticket.ESTADO}</p>
-                          <p>{Number(ticket.PRECIO_RIFA).toLocaleString('es-PY')}Gs</p>
+                          <p>Rifa #{ticket.numeroRifa}</p>
+                          <p>{ticket.estadoRifa === 1 ? "DISPONIBLE" : ticket.estadoRifa === 2 ? "PAGADO" : ticket.estadoRifa === 3 ? "PENDIENTE" : ""}</p>
+                          <p>{Number(premio.precio_ticket).toLocaleString('es-PY')}Gs</p>
                         </div>
                       )}
                     </div>
@@ -138,25 +154,9 @@ function Premio() {
             })}
           </div>
         </div>
-        <div className="estados-rifas-container">
-          <ul className="estados-rifas-list">
-            <div className="estados-item">
-              <div className="estados-color" style={{background: '#fff', height: '20px', width: '20px'}}></div>
-              <span className="estados-text">Disponible</span>
-            </div>
-            <div className="estados-item">
-              <div className="estados-color" style={{background: '#ae2f2f', height: '20px', width: '20px'}}></div>
-              <span className="estados-text">Pagado</span>
-            </div>
-            <div className="estados-item">
-              <div className="estados-color" style={{background: '#202020', height: '20px', width: '20px'}}></div>
-              <span className="estados-text">Seleccionado</span>
-            </div>
-          </ul>
-        </div>
       </section>
     </div>
   );
 }
 
-export default Premio;
+export default InfoPremio;

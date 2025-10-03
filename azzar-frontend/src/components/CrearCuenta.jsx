@@ -9,6 +9,8 @@ function CrearCuenta({ onClose }) {
   const [showVerifyModal, setShowVerifyModal] = useState(false);
   const [verificationCode, setVerificationCode] = useState(""); 
   const [generatedCode, setGeneratedCode] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [modalCheck, setModalCheck] = useState(false);
 
   const [nombre, setNombre] = useState("");
   const [documento, setDocumento] = useState("");
@@ -33,6 +35,7 @@ function CrearCuenta({ onClose }) {
 
   const enviarCorreo = async (e) =>{
     e.preventDefault();
+    setLoading(true);
 
     if (password !== confirmPassword) {
       setError("Las contraseñas no coinciden");
@@ -42,7 +45,7 @@ function CrearCuenta({ onClose }) {
     setError("");
 
     try {
-      const response = await fetch("http://localhost:3000/api/verificacion/enviar-codigo", {
+      const response = await fetch("http://localhost:8080/v1/azzar/clientes/enviar-correo", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ correo: email })
@@ -51,13 +54,15 @@ function CrearCuenta({ onClose }) {
       const data = await response.json();
 
       if (response.ok) {
-        setGeneratedCode(data.codigo);
+        setGeneratedCode(data);
         setShowVerifyModal(true);
       } else {
         setError(data.error || "Error al enviar el correo");
       }
     } catch (err) {
       setError("Error al enviar el correo");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -68,19 +73,21 @@ function CrearCuenta({ onClose }) {
 
   const registrarUsuario = async (e) => {
     e.preventDefault();
+    setLoading(true);
     setError("");
     if (verificationCode === generatedCode.toString()) {
       try {
         const usuario = {
-          nombreCompleto: nombre,
-          numeroDocumento: documento,
+          nombreCliente: nombre,
+          nroDocumento: documento,
           sexo: sexo,
           telefono: countryCode + phone.replace(/\s+/g, ""),
           correo: email,
-          passwordHash: password
+          contrasena: password,
+          estado: 1
         }
 
-        const response = await fetch("http://localhost:3000/api/clientes/crear", {
+        const response = await fetch("http://localhost:8080/v1/azzar/clientes/registrar", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(usuario)
@@ -90,16 +97,19 @@ function CrearCuenta({ onClose }) {
 
         if(response.ok){
           console.log('Usuario registrado');
-          onClose();
+          setModalCheck(true);
         }else{
           setError(data.error || "Error al crear usuario");
         }
 
       } catch (err) {
         setError("Error Interno, intente mas tarde.");
+      } finally {
+        setLoading(false);
       }
     } else {
       setError("El código ingresado es incorrecto");
+      setLoading(false);
     }
   }
 
@@ -196,7 +206,9 @@ function CrearCuenta({ onClose }) {
           </label>
 
           {error && <p className="error-message">{error}</p>}
-          <button className="registrar-btn" onClick={enviarCorreo}>Registrar</button>
+          <button className="registrar-btn" onClick={enviarCorreo}>
+            {loading ? <span className="spinner"></span> : "Registrar"}
+          </button>
         </form>
       </div>
     ) : (
@@ -238,12 +250,29 @@ function CrearCuenta({ onClose }) {
         {error && <p className="error-message">{error}</p>}
         <button className='btn-verificar'
           onClick={registrarUsuario}>
-          Verificar correo
+          {loading ? <span className="spinner"></span> : "Verificar correo"}
         </button>
 
         <a className='btn-reenviar' onClick={enviarCorreo}>Reenviar código</a>
       </div>
 
+    )}
+
+    {modalCheck ? (
+      <div className='modal-check'>
+        <div className='icon-container'>
+          <span class="material-symbols-outlined">
+            check
+          </span>
+        </div>
+        <span className='modal-check-title'>Se ha registrado la cuenta correctamente.</span>
+        <span className='modal-check-descrip'>El correo <b>{email}</b> se encuentra afiliada a una cuenta.</span>
+        <button className='modal-check-btn' onClick={onClose()}>
+          Listo
+        </button>
+      </div>
+    ): (
+      <></>
     )}
   </div>
 );
