@@ -13,7 +13,7 @@ function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
-  const { cart, isCartOpen, setIsCartOpen, removeTicket } = useContext(CartContext);
+  const { cart, isCartOpen, setIsCartOpen, removeTicket, clearCart } = useContext(CartContext);
 
   const Inicio = () => {
     navigate("/");
@@ -38,7 +38,48 @@ function Navbar() {
     window.location.reload();
   };
 
+  const irPedidos = () => {
+    navigate("/pagos/checkout");
+  };
+
   const total = cart.reduce((acc, ticket) => acc + Number(ticket.PRECIO || 0), 0);
+
+  const irPagar = async () =>  {
+    try {
+
+      if (cart.length === 0) {
+        alert("Tu carrito está vacío.");
+        return;
+      }
+
+      const idRifas = cart.map(p => p.ID_RIFA);
+
+      const body = {
+        idCliente: usuario.idCliente,
+        rifasLista: idRifas
+      };
+
+      const response = await fetch("http://localhost:8080/v1/azzar/pagos/reservar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
+
+      if(response.ok){
+        const data = await response.json();
+        console.log("Reservas creadas:", data);
+        clearCart();
+        setIsCartOpen(false);
+        navigate("/pagos/checkout");
+      }else{
+        const errorText = await response.text();
+        console.error("Error al reservar rifas:", errorText);
+      }
+
+    } catch (error) {
+      console.error("Error en ir a pagar: ", error);
+    }
+  };
 
   return (
     <>
@@ -62,6 +103,9 @@ function Navbar() {
                   </span>
                   {menuOpen && (
                     <div className="usuario-dropdown">
+                      <span onClick={() => irPedidos()} className="dropdown-item">
+                        Mis pedidos
+                      </span>
                       <span onClick={cerrarSesion} className="dropdown-item">
                         Cerrar sesión
                       </span>
@@ -130,7 +174,7 @@ function Navbar() {
                 </ul>
 
                 <div className="btn-continuar-pago-container">
-                  <button>
+                  <button onClick={() => irPagar()}>
                     <span className="pago-title">Ir a pagar</span>
                     <span className="monto">{total.toLocaleString('es-PY')}Gs</span>
                   </button>

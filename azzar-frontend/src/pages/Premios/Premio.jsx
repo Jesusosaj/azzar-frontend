@@ -13,6 +13,8 @@ function Premio() {
   const itemsPerPage = 8;
 
     useEffect(() => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      
         const estaLogueado = async () => {
           const token = localStorage.getItem("token");
           if(token){

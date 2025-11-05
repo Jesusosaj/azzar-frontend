@@ -153,3 +153,138 @@
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+
+/* === Animación de aparición === */
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-iniciar-sesion {
+  animation: fadeSlideIn 0.3s ease forwards;
+  transition: all 0.3s ease;
+}
+
+/* === RESPONSIVE DESIGN === */
+
+/* Tablets medianas */
+@media (max-width: 1024px) {
+  .modal-iniciar-sesion {
+    width: 50%;
+    padding: 20px;
+  }
+
+  .iniciar-sesion-title {
+    font-size: 24px;
+  }
+
+  .correo-input-container span,
+  .pass-input-container span {
+    font-size: 15px;
+  }
+}
+
+/* 📱 Pantallas pequeñas (celulares grandes) */
+@media (max-width: 768px) {
+  .modal-iniciar-sesion {
+    width: 85%;
+    padding: 20px 18px;
+    border-radius: 16px;
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
+  }
+
+  .close-btn {
+    background: #202020;
+    width: 30px;
+    height: 30px;
+    font-size: 18px;
+  }
+
+  .iniciar-sesion-title {
+    font-size: 22px;
+    text-align: center;
+  }
+
+  .form-container {
+    gap: 12px;
+  }
+
+  .correo-input-container input,
+  .pass-input-container input {
+    padding: 10px 12px;
+    font-size: 15px;
+  }
+
+  .submit-btn {
+    font-size: 15px;
+    padding: 10px;
+  }
+
+  .recovery-pass {
+    text-align: center;
+    font-size: 13px;
+  }
+
+  .error-message {
+    font-size: 13px;
+    color: crimson;
+    text-align: center;
+  }
+}
+
+/* 📱 Celulares pequeños (menos de 480px) */
+@media (max-width: 480px) {
+  .modal-iniciar-sesion {
+    width: 90%;
+    padding: 18px 15px;
+    gap: 12px;
+    border-radius: 20px;
+  }
+
+  .close-container {
+    top: 8px;
+    right: 8px;
+  }
+
+  .iniciar-sesion-title {
+    font-size: 20px;
+    padding-bottom: 6px;
+  }
+
+  .correo-input-container span,
+  .pass-input-container span {
+    font-size: 14px;
+  }
+
+  .correo-input-container input,
+  .pass-input-container input {
+    font-size: 14px;
+    padding: 9px 10px;
+    border-radius: 8px;
+  }
+
+  .submit-btn {
+    font-size: 14px;
+    padding: 8px;
+    border-radius: 8px;
+  }
+
+  .spinner {
+    width: 14px;
+    height: 14px;
+  }
+
+  .btn-verificar,
+  .btn-reenviar {
+    width: 100%;
+    text-align: center;
+    display: block;
+  }
+}

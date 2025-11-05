@@ -106,9 +106,9 @@ function IniciarSesion({ onClose }) {
     }
 
     try {
-      const usuario = { correo: email, password: newPassword };
+      const usuario = { correo: email, nuevaContrasena: newPassword };
 
-      const response = await fetch("http://localhost:3000/api/clientes/cambiar/password", {
+      const response = await fetch("http://localhost:8080/v1/azzar/clientes/cambiar/password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(usuario)

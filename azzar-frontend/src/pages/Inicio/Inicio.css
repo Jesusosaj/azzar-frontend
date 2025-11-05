@@ -209,3 +209,126 @@
   justify-content: flex-start;
 }
 
+
+
+
+
+/* 📱 Responsive design */
+@media (max-width: 992px) {
+  .inicio-container-header {
+    flex-direction: column;
+    width: 90%;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .inicio-container-header-collage {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 100px;
+  }
+
+  .inicio-container-header-info {
+    padding: 0;
+    max-width: 100%;
+    align-items: center;
+  }
+
+  .inicio-container-header-info-h3 {
+    font-size: 32px;
+  }
+
+  .inicio-container-header-info-h2 {
+    font-size: 64px;
+  }
+
+  .eventos-container-header {
+    width: 90%;
+  }
+
+  .eventos-container-main-list-content {
+    justify-content: center;
+  }
+
+  .eventos-img-container {
+    width: 280px;
+  }
+}
+
+/* 📱 Móviles: ocultar imágenes del collage y centrar solo texto */
+@media (max-width: 768px) {
+  .inicio-container {
+    min-height: 60vh;
+    justify-content: center;
+  }
+
+  .inicio-container-header {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .inicio-container-header-collage {
+    display: none; /* 🔥 Ocultamos las imágenes */
+  }
+
+  .inicio-container-header-info {
+    padding: 0;
+    text-align: center;
+  }
+
+  .inicio-container-header-info-h3 {
+    font-size: 48px;
+  }
+
+  .inicio-container-header-info-h2 {
+    font-size: 64px;
+    letter-spacing: 1px;
+  }
+
+  .eventos-container-header-h2 {
+    font-size: 18px;
+    text-align: center;
+  }
+
+  .eventos-item {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .eventos-img-container {
+    width: 100%;
+  }
+
+  .eventos-item-text {
+    padding: 15px;
+    text-align: center;
+  }
+
+  .eventos-container-main-list-content {
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+/* 📱 Extra pequeño (celulares chicos) */
+@media (max-width: 480px) {
+  .inicio-container-header-info-h3 {
+    font-size: 38px;
+  }
+
+  .inicio-container-header-info-h2 {
+    font-size: 48px;
+  }
+
+  .eventos-item {
+    max-width: 260px;
+  }
+
+  .eventos-item-title {
+    font-size: 16px;
+  }
+
+  .eventos-item-ubicacion {
+    font-size: 11px;
+  }
+}

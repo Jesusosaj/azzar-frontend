@@ -14,6 +14,8 @@ function InfoPremio() {
   const { cart, toggleTicket, setIsCartOpen } = useContext(CartContext);
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    
     const fetchTickets = async () => {
       try {
         const res = await fetch(`http://localhost:8080/v1/azzar/rifas/premio/${id}`);
@@ -145,7 +147,7 @@ function InfoPremio() {
                       {hoveredTicket && hoveredTicket.idRifa === ticket.idRifa && (
                         <div className="ticket-tooltip">
                           <p>Rifa #{ticket.numeroRifa}</p>
-                          <p>{ticket.estadoRifa === 1 ? "DISPONIBLE" : ticket.estadoRifa === 2 ? "PAGADO" : ticket.estadoRifa === 3 ? "PENDIENTE" : ""}</p>
+                          <p>{ticket.estadoRifa === 1 ? "DISPONIBLE" : ticket.estadoRifa === 2 ? "PAGADO" : ticket.estadoRifa === 3 ? "RESERVA" : ""}</p>
                           <p>{Number(premio.precio_ticket).toLocaleString('es-PY')}Gs</p>
                         </div>
                       )}

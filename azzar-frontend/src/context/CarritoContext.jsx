@@ -18,6 +18,9 @@ export const CarritoProvider = ({ children }) => {
     setCart((prev) => prev.filter((t) => t.ID_RIFA !== ticketId));
   };
 
+  const clearCart = () => {
+    setCart([]);
+  };
 
   const toggleTicket = (ticket) => {
     setCart((prev) => {
@@ -32,7 +35,7 @@ export const CarritoProvider = ({ children }) => {
   };
 
   return (
-    <CartContext.Provider value={{ cart, toggleTicket, isCartOpen, setIsCartOpen, removeTicket }}>
+    <CartContext.Provider value={{ cart, toggleTicket, isCartOpen, setIsCartOpen, removeTicket, clearCart }}>
       {children}
     </CartContext.Provider>
   );
