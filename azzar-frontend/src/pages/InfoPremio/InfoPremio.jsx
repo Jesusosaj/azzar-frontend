@@ -18,7 +18,7 @@ function InfoPremio() {
     
     const fetchTickets = async () => {
       try {
-        const res = await fetch(`https://192.168.100.91:8080/v1/azzar/rifas/premio/${id}`);
+        const res = await fetch(`http://192.168.100.91:8080/v1/azzar/rifas/premio/${id}`);
         const data = await res.json();
         setTickets(data);
       } catch (err) {
@@ -31,7 +31,7 @@ function InfoPremio() {
   useEffect(() => {
     const fetchPremio = async () => {
       try {
-        const res = await fetch(`https://192.168.100.91:8080/v1/azzar/premios/${id}`);
+        const res = await fetch(`http://192.168.100.91:8080/v1/azzar/premios/${id}`);
         const data = await res.json();
         setPremio({
           id_premio: data.idPremio,

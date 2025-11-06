@@ -47,7 +47,7 @@ function Pagos() {
 
   const traerPedidos = async (idCliente) => {
     try {
-      const res = await fetch(`https://192.168.100.91:8080/v1/azzar/pedidos/pendientes/${idCliente}`);
+      const res = await fetch(`http://192.168.100.91:8080/v1/azzar/pedidos/pendientes/${idCliente}`);
       if (!res.ok) throw new Error("Error al obtener los pedidos");
 
       const data = await res.json();
@@ -80,7 +80,7 @@ function Pagos() {
 
   const eliminarPedido = async (idRifa) => {
     try {
-      const res = await fetch(`https://192.168.100.91:8080/v1/azzar/pagos/eliminar/${idRifa}`, {
+      const res = await fetch(`http://192.168.100.91:8080/v1/azzar/pagos/eliminar/${idRifa}`, {
         method: 'DELETE',
       });
 
@@ -128,7 +128,7 @@ function Pagos() {
 
       formData.append("imagenComprobante", file);
 
-      const response = await fetch("https://192.168.100.91:8080/v1/azzar/pagos/confirmar", {
+      const response = await fetch("http://192.168.100.91:8080/v1/azzar/pagos/confirmar", {
         method: "POST",
         body: formData,
       });
