@@ -36,7 +36,7 @@ function Premio() {
     
         const fetchPremios = async () => {
           try {
-            const res = await fetch("http://localhost:8080/v1/azzar/premios/evento/"+id);
+            const res = await fetch("http://148.230.72.5:8080/v1/azzar/premios/evento/"+id);
             const data = await res.json();
 
             const premios = data.map(p => ({

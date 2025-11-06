@@ -59,7 +59,7 @@ function Navbar() {
         rifasLista: idRifas
       };
 
-      const response = await fetch("http://localhost:8080/v1/azzar/pagos/reservar", {
+      const response = await fetch("http://148.230.72.5:8080/v1/azzar/pagos/reservar", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body)
