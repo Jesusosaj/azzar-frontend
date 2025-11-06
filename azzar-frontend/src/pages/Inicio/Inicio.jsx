@@ -26,7 +26,7 @@ function Inicio() {
   useEffect(() => {
     const fetchEmpresas = async () => {
       try {
-        const res = await fetch("http://192.168.100.91:8080/v1/azzar/empresas-afiliadas");
+        const res = await fetch("https://unlyrical-bronwyn-subangular.ngrok-free.dev/v1/azzar/empresas-afiliadas");
         const data = await res.json();
         const ahora = new Date();
 
@@ -46,7 +46,7 @@ function Inicio() {
 
     const fetchEventos = async () => {
       try {
-        const res = await fetch("http://192.168.100.91:8080/v1/azzar/eventos");
+        const res = await fetch("https://unlyrical-bronwyn-subangular.ngrok-free.dev/v1/azzar/eventos");
         const data = await res.json();
 
         const eventos = data.map(p => ({
