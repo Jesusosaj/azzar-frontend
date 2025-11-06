@@ -31,7 +31,7 @@ function IniciarSesion({ onClose }) {
     try {
       const usuario = { correo: email, contrasena: password };
 
-      const response = await fetch("https://unlyrical-bronwyn-subangular.ngrok-free.dev/v1/azzar/clientes/login", {
+      const response = await fetch("http://localhost:8080/v1/azzar/clientes/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(usuario)
@@ -58,7 +58,7 @@ function IniciarSesion({ onClose }) {
     setError("");
     setLoading(true);
     try {
-      const response = await fetch("https://unlyrical-bronwyn-subangular.ngrok-free.dev/v1/azzar/clientes/enviar-correo", {
+      const response = await fetch("http://localhost:8080/v1/azzar/clientes/enviar-correo", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ correo: email })
@@ -108,7 +108,7 @@ function IniciarSesion({ onClose }) {
     try {
       const usuario = { correo: email, nuevaContrasena: newPassword };
 
-      const response = await fetch("https://unlyrical-bronwyn-subangular.ngrok-free.dev/v1/azzar/clientes/cambiar/password", {
+      const response = await fetch("http://localhost:8080/v1/azzar/clientes/cambiar/password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(usuario)

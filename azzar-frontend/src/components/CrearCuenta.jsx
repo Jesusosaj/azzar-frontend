@@ -45,7 +45,7 @@ function CrearCuenta({ onClose }) {
     setError("");
 
     try {
-      const response = await fetch("https://unlyrical-bronwyn-subangular.ngrok-free.dev/v1/azzar/clientes/enviar-correo", {
+      const response = await fetch("http://localhost:8080/v1/azzar/clientes/enviar-correo", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ correo: email })
@@ -87,7 +87,7 @@ function CrearCuenta({ onClose }) {
           estado: 1
         }
 
-        const response = await fetch("https://unlyrical-bronwyn-subangular.ngrok-free.dev/v1/azzar/clientes/registrar", {
+        const response = await fetch("http://localhost:8080/v1/azzar/clientes/registrar", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(usuario)

@@ -59,7 +59,7 @@ function Navbar() {
         rifasLista: idRifas
       };
 
-      const response = await fetch("https://unlyrical-bronwyn-subangular.ngrok-free.dev/v1/azzar/pagos/reservar", {
+      const response = await fetch("http://localhost:8080/v1/azzar/pagos/reservar", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body)
