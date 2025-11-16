@@ -13,20 +13,18 @@ RUN npm install
 # Copiar el resto del proyecto
 COPY . .
 
-# Construir la app para producción
+# Construir la app para producción (Vite genera /dist)
 RUN npm run build
 
 # Etapa 2: servidor para producción
 FROM nginx:alpine
 
-# Copiar build al directorio de Nginx
-COPY --from=build /app/build /usr/share/nginx/html
+# Copiar la carpeta dist generada por Vite al directorio de Nginx
+COPY --from=build /app/dist /usr/share/nginx/html
 
-# Copiar configuración de Nginx si quieres personalizar (opcional)
-# COPY nginx.conf /etc/nginx/nginx.conf
-
-# Exponer puerto 80
-EXPOSE 5173
+# Exponer el puerto 80
+EXPOSE 80
 
 # Comando por defecto
 CMD ["nginx", "-g", "daemon off;"]
+
