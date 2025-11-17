@@ -295,3 +295,220 @@
 .info-cuenta span b{
   color: #2fd790;
 }
+
+
+/* ===================================================== */
+/* NUEVO: Selector de métodos de pago */
+/* ===================================================== */
+
+.metodos-selector {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+
+.btn-metodo {
+  width: 50%;
+  padding: 12px 0;
+  font-size: 15px;
+  font-weight: 600;
+  background: #e8e8e8;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  color: #202020;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.btn-metodo:hover {
+  background: #dcdcdc;
+}
+
+.btn-metodo.active {
+  background: #202020;
+  color: #fff;
+  border-color: #202020;
+}
+
+
+/* ===================================================== */
+/* NUEVO: Formulario de tarjeta */
+/* ===================================================== */
+
+.tarjeta-form {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.label-tarjeta {
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+  font-weight: 500;
+  color: #202020;
+}
+
+.label-tarjeta input {
+  margin-top: 6px;
+  padding: 10px 12px;
+  font-size: 14px;
+  border: 1.8px solid #ccc;
+  border-radius: 8px;
+  transition: 0.2s;
+}
+
+.label-tarjeta input:focus {
+  outline: none;
+  border-color: #202020;
+}
+
+.tarjeta-flex {
+  display: flex;
+  gap: 10px;
+}
+
+.tarjeta-flex .label-tarjeta {
+  width: 100%;
+}
+
+/* CVV con estilo oculto (puntitos más separados) */
+.label-tarjeta input[type="password"] {
+  letter-spacing: 4px;
+}
+
+
+/* ===================================================== */
+/* NUEVO: Mejoras de responsividad */
+/* ===================================================== */
+
+@media (max-width: 900px) {
+  .tarjeta-flex {
+    flex-direction: column;
+  }
+
+  .btn-metodo {
+    padding: 10px;
+    font-size: 14px;
+  }
+}
+
+
+
+/* 📱 RESPONSIVE — Mis pedidos */
+@media (max-width: 768px) {
+
+  .pedidos-container {
+    width: 95%;
+    flex-direction: column;
+    padding-top: 60px;
+    gap: 20px;
+  }
+
+  .mis-pedidos {
+    width: 100%;
+  }
+
+  /* 📦 El panel de pago ahora ocupa todo el ancho */
+  .pago-container {
+    width: 100%;
+    min-width: 100%;
+    position: relative;
+    top: 0;
+  }
+
+  .metodos-selector {
+    gap: 10px;
+  }
+
+  .btn-metodo {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .info-cuenta img {
+    width: 90px;
+  }
+
+  /* Upload box más pequeño */
+  .upload-box {
+    width: 100%;
+  }
+
+  .file-info {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .remove-btn {
+    width: 28px;
+    height: 28px;
+  }
+
+  /* Inputs tarjeta */
+  .label-tarjeta input {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .tarjeta-flex {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .btn-pagar {
+    font-size: 14px;
+    padding: 12px;
+    margin-top: 10px;
+  }
+
+  /* Lista de pedidos */
+  .pedidos-list {
+    max-height: unset;
+  }
+
+  .pedido-item-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+
+  .pedido-precio-container {
+    margin-left: 0;
+  }
+}
+
+/* 📱 EXTRA SMALL — 480px */
+@media (max-width: 480px) {
+  .pedidos-title {
+    font-size: 22px;
+  }
+
+  .delete-icon {
+    font-size: 28px;
+  }
+
+  .pago-total {
+    font-size: 14px;
+  }
+
+  .pago-container {
+    padding: 12px;
+  }
+
+  .btn-metodo {
+    font-size: 13px;
+    padding: 8px;
+  }
+
+  .btn-pagar {
+    font-size: 13px;
+    padding: 10px;
+  }
+
+  .upload-box {
+    padding: 10px;
+  }
+}

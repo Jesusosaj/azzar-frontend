@@ -2,30 +2,55 @@ import { useEffect, useState, useRef } from 'react';
 import jwt_decode from "jwt-decode";
 import './Pagos.css';
 import { useNavigate } from "react-router-dom";
+import ImagenTarjeta from "../../assets/tarjetaImagen.webp";
+
+// 🔔 Notificaciones
+import useNotificacion from "../../components/hooks/useNotificacion.js";
+import Notificacion from "../../components/Notificacion.jsx";
 
 function Pagos() {
   const [usuario, setUsuario] = useState(null);
   const [pedidos, setPedidos] = useState([]);
   const [resumen, setResumen] = useState([]);
   const [file, setFile] = useState(null);
+  const [metodoPago, setMetodoPago] = useState("transferencia");
+
+  // Form tarjeta
+  const [nombreTarjeta, setNombreTarjeta] = useState("");
+  const [numeroTarjeta, setNumeroTarjeta] = useState("");
+  const [expiracion, setExpiracion] = useState("");
+  const [cvv, setCvv] = useState("");
+
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
+  // Toaster
+  const { toasts, showToast, removeToast } = useNotificacion();
+
+  const convertirImagenAFile = async (src, nombreArchivo) => {
+    const res = await fetch(src);      // trae la imagen desde /assets
+    const blob = await res.blob();     // convierte a Blob
+    return new File([blob], nombreArchivo, { type: blob.type });
+  };
+
   const handleFileChange = (e) => {
     const selected = e.target.files[0];
-    if (selected && (selected.type === "image/jpeg" || selected.type === "image/png")) {
+
+    if (!selected) return;
+
+    if (selected.type === "image/jpeg" || selected.type === "image/png") {
       setFile(selected);
+      showToast("Comprobante cargado correctamente", "success");
     } else {
-      alert("Solo se permiten imágenes JPG o PNG");
+      showToast("Solo se permiten imágenes JPG o PNG.", "error");
       e.target.value = "";
     }
   };
 
   const removeFile = () => {
     setFile(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    showToast("Archivo eliminado", "info");
   };
 
   useEffect(() => {
@@ -48,13 +73,20 @@ function Pagos() {
   const traerPedidos = async (idCliente) => {
     try {
       const res = await fetch(`http://148.230.72.52:8080/v1/azzar/pedidos/pendientes/${idCliente}`);
-      if (!res.ok) throw new Error("Error al obtener los pedidos");
+      if (!res.ok) throw new Error();
 
+      if (res.status === 204) {
+        setPedidos([]);
+        generarResumen([]);
+        return;
+      }
+      
       const data = await res.json();
       setPedidos(data);
       generarResumen(data);
-    } catch (err) {
-      console.error("Error al cargar los pedidos:", err);
+
+    } catch (err){
+      showToast("Error al cargar los pedidos", "error");
     }
   };
 
@@ -63,19 +95,19 @@ function Pagos() {
 
     data.forEach(p => {
       if (!resumenMap[p.nombrePremio]) {
-        resumenMap[p.nombrePremio] = { cantidad: 0, total: 0, precio: p.precioRifa };
+        resumenMap[p.nombrePremio] = { cantidad: 0, total: 0 };
       }
-      resumenMap[p.nombrePremio].cantidad += 1;
+      resumenMap[p.nombrePremio].cantidad++;
       resumenMap[p.nombrePremio].total += p.precioRifa;
     });
 
-    const resumenArray = Object.entries(resumenMap).map(([nombrePremio, info]) => ({
+    const resumenArr = Object.entries(resumenMap).map(([nombrePremio, info]) => ({
       nombrePremio,
       cantidad: info.cantidad,
       total: info.total
     }));
 
-    setResumen(resumenArray);
+    setResumen(resumenArr);
   };
 
   const eliminarPedido = async (idRifa) => {
@@ -84,37 +116,29 @@ function Pagos() {
         method: 'DELETE',
       });
 
-      if (!res.ok) throw new Error("Error al eliminar el pedido");
+      if (!res.ok) throw new Error();
 
       setPedidos(prev => {
         const nuevos = prev.filter(p => p.idRifa !== idRifa);
         generarResumen(nuevos);
         return nuevos;
       });
-    } catch (err) {
-      console.error("Error al eliminar el pedido:", err);
+
+      showToast("Ítem eliminado", "success");
+
+    } catch {
+      showToast("No se pudo eliminar el ítem", "error");
     }
   };
 
-  const calcularTotal = () => {
-    return resumen.reduce((acc, item) => acc + item.total, 0);
-  };
+  const calcularTotal = () =>
+    resumen.reduce((acc, item) => acc + item.total, 0);
 
-  const pagar = async () => {
-    if (!file) {
-      alert("Por favor, inserte el comprobante de pago antes de continuar.");
-      return;
-    }
-
-    if (!usuario || !usuario.idCliente) {
-      alert("No se pudo identificar el usuario.");
-      return;
-    }
-
-    if (pedidos.length === 0) {
-      alert("No hay pedidos para pagar.");
-      return;
-    }
+  // PAGAR TRANSFERENCIA
+  const pagarTransferencia = async () => {
+    if (!file) return showToast("Inserte el comprobante antes de continuar.", "warning");
+    if (!usuario || !usuario.idCliente) return showToast("Usuario no identificado.", "error");
+    if (pedidos.length === 0) return showToast("No hay pedidos para pagar.", "warning");
 
     try {
       const idRifas = pedidos.map(p => p.idRifa);
@@ -124,8 +148,7 @@ function Pagos() {
       idRifas.forEach(r => formData.append("rifasLista", r));
       formData.append("monto", calcularTotal());
       formData.append("idPagoPar", "null");
-      formData.append("referencia", "Pago via web");
-
+      formData.append("referencia", "Pago via web transferencia");
       formData.append("imagenComprobante", file);
 
       const response = await fetch("http://148.230.72.52:8080/v1/azzar/pagos/confirmar", {
@@ -133,132 +156,284 @@ function Pagos() {
         body: formData,
       });
 
-      if (!response.ok) throw new Error("Error al confirmar el pago");
+      if (!response.ok) throw new Error();
 
-      const data = await response.json();
+      showToast("Pago realizado con éxito, esperando aprobacion...", "success");
 
-      if (data === true) {
-        alert("Pago confirmado con éxito");
-        setFile(null);
-        if (fileInputRef.current) fileInputRef.current.value = "";
-        
+      setTimeout(() => {
         navigate("/");
-      } else {
-        alert("No se pudo confirmar el pago. Intente nuevamente.");
-      }
-    } catch (err) {
-      console.error("Error al confirmar el pago:", err);
-      alert("Error al procesar el pago.");
+      }, 1500);
+
+    } catch {
+      showToast("Error al procesar el pago", "error");
     }
   };
 
+  // PAGAR TARJETA
+  const pagarTarjeta = async () => {
+    if (nombreTarjeta.length < 5)
+      return showToast("Nombre inválido", "error");
+
+    if (numeroTarjeta.length < 19)
+      return showToast("Número de tarjeta inválido", "error");
+
+    if (expiracion.length < 5)
+      return showToast("Fecha inválida", "error");
+
+    if (cvv.length < 3)
+      return showToast("CVV inválido", "error");
+
+    const idRifas = pedidos.map(p => p.idRifa);
+    const formData = new FormData();
+
+    formData.append("idCliente", usuario.idCliente);
+    idRifas.forEach(r => formData.append("rifasLista", r));
+    formData.append("monto", calcularTotal());
+    formData.append("idPagoPar", "null");
+    formData.append("referencia", "Pago via web Tarjeta");
+
+    const fileTarjeta = await convertirImagenAFile(ImagenTarjeta, "comprobante_tarjeta.webp");
+
+    formData.append("imagenComprobante", fileTarjeta);
+
+    const response = await fetch("http://148.230.72.52:8080/v1/azzar/pagos/confirmar", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) throw new Error();
+
+    const res = await fetch(`http://148.230.72.52:8080/v1/azzar/pagos/cliente/${usuario.idCliente}`);
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+
+    const idPago = data.idPago;
+
+    const aprobacion = await fetch("http://148.230.72.52:8080/v1/azzar/pagos/aprobar", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ idPago: idPago })
+    });
+
+    if(!aprobacion.ok) throw new Error();
+
+    const envioCorreoComprobante = await fetch(`http://148.230.72.52:8080/v1/azzar/pagos/enviar/${usuario.idCliente}/${idPago}`, {
+      method: "POST"
+    });
+
+    if(!envioCorreoComprobante.ok) throw new Error();
+
+    showToast("Pago con tarjeta procesado correctamente", "success");
+
+    setTimeout(() => {
+      navigate("/");
+    }, 1500);
+  };
+
+  // FORMATEO TARJETA
+  const formatearTarjeta = (value) => {
+    return value
+      .replace(/\D/g, "")
+      .slice(0, 16)
+      .replace(/(.{4})/g, "$1 ")
+      .trim();
+  };
+
+  const formatearFecha = (value) => {
+    return value
+      .replace(/\D/g, "")
+      .slice(0, 4)
+      .replace(/(\d{2})(\d{1,2})/, "$1/$2");
+  };
 
   return (
-    <div className='contenedor'>
-      <section className="pedidos-container">
-        {/* 🧾 Lista de pedidos */}
-        <div className='mis-pedidos'>
-          <h3 className='pedidos-title'>Mis pedidos</h3>
-          <div className='pedidos-backline'></div>
+    <>
+      <Notificacion toasts={toasts} removeToast={removeToast} />
 
-          {pedidos.length > 0 ? (
-            <ul className='pedidos-list'>
-              {pedidos.map((p, index) => (
-                <li className="pedido-item" key={index}>
-                  <div className="pedido-item-container">
-                    <div className="btn-eliminar-pedido">
-                      <button onClick={() => eliminarPedido(p.idRifa)}>
-                        <span className="material-symbols-outlined delete-icon">delete</span>
-                      </button>
-                    </div>
-                    <div className="pedido-info-container">
-                      <div className="pedido-info-title">
-                        <span>{p.nombrePremio}</span>
-                      </div>
-                      <div className="pedido-info-descripcion">
-                        <span>Rifa #{p.numeroRifa}</span>
-                      </div>
-                    </div>
-                    <div className="pedido-precio-container">
-                      <span>{Number(p.precioRifa).toLocaleString('es-PY')} Gs</span>
-                    </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <div className='pedidos-vacio'>
-              <span className="material-symbols-outlined pedidos-icon">shopping_cart</span>
-              <span className="pedidos-vacio-text">No tienes pedidos pendientes.</span>
-            </div>
-          )}
-        </div>
+      <div className='contenedor'>
 
-        {/* 💳 Resumen de pago */}
-        {pedidos.length > 0 && (
-          <div className='pago-container'>
-            <div className='info-cuenta'>
-              <img src="https://alarmas.com.py/assets/img/pagos/ueno_bank_2x_1x-removebg-preview.png" alt="ueno bank logo" />
-              <span><b>Nro.Cuenta: </b>0023243823-34</span>
-              <span><b>Nombre: </b>Azzar</span>
-              <span><b>Alias: </b>+595973492323</span>
-            </div>
-            <h3 className='pago-title'>Items a pagar</h3>
+        <section className="pedidos-container">
+          
+          {/* LISTA DE PEDIDOS */}
+          <div className='mis-pedidos'>
+            <h3 className='pedidos-title'>Mis pedidos</h3>
             <div className='pedidos-backline'></div>
 
-            <ul className='items-list'>
-              {resumen.map((item, index) => (
-                <li className='item-pago' key={index}>
-                  <span className='item-pago-nombre'>
-                    Rifa {item.nombrePremio} x{item.cantidad}
-                  </span>
-                  <span className='item-pago-precio'>
-                    {Number(item.total).toLocaleString('es-PY')} Gs
-                  </span>
-                </li>
-              ))}
-            </ul>
+            {pedidos.length > 0 ? (
+              <ul className='pedidos-list'>
+                {pedidos.map((p, index) => (
+                  <li className="pedido-item" key={index}>
+                    <div className="pedido-item-container">
+                      <div className="btn-eliminar-pedido">
+                        <button onClick={() => eliminarPedido(p.idRifa)}>
+                          <span className="material-symbols-outlined delete-icon">delete</span>
+                        </button>
+                      </div>
+                      <div className="pedido-info-container">
+                        <span>{p.nombrePremio}</span>
+                        <span>Rifa #{p.numeroRifa}</span>
+                      </div>
+                      <div className="pedido-precio-container">
+                        <span>{Number(p.precioRifa).toLocaleString('es-PY')} Gs</span>
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className='pedidos-vacio'>
+                <span className="material-symbols-outlined pedidos-icon">shopping_cart</span>
+                <span>No tienes pedidos pendientes.</span>
+              </div>
+            )}
 
-            <div className='pago-total'>
-              <span>Total:</span>
-              <span className='pago-total-monto'>{Number(calcularTotal()).toLocaleString('es-PY')} Gs</span>
-            </div>
-            
-            <div className="upload-card">
-              <label htmlFor="fileInput" className="upload-box">
-                <input
-                  id="fileInput"
-                  type="file"
-                  accept=".jpg,.png"
-                  onClick={(e) => { e.target.value = null; }}
-                  onChange={handleFileChange}
-                  className="hidden-input"
-                />
-                {!file ? (
-                  <>
-                    <span class="material-symbols-outlined upload-icon">
-                      upload
-                    </span>
-                    <p className="upload-text">Inserte el comprobante de pago</p>
-                  </>
-                ) : (
-                  <div className="file-info">
-                    <span className="file-name">{file.name}</span>
-                    <button className="remove-btn" onClick={removeFile}>
-                      <span className="material-symbols-outlined">delete</span>
-                    </button>
-                  </div>
-                )}
-              </label>
-            </div>
-
-            <button className='btn-pagar' onClick={pagar}>
-              Pagar ahora
-            </button>
           </div>
-        )}
-      </section>
-    </div>
+
+          {/* MÉTODOS DE PAGO */}
+          {pedidos.length > 0 && (
+            <div className='pago-container'>
+
+              <div className="metodos-selector">
+                <button
+                  className={metodoPago === "transferencia" ? "btn-metodo active" : "btn-metodo"}
+                  onClick={() => setMetodoPago("transferencia")}
+                >
+                  Transferencia
+                </button>
+
+                <button
+                  className={metodoPago === "tarjeta" ? "btn-metodo active" : "btn-metodo"}
+                  onClick={() => setMetodoPago("tarjeta")}
+                >
+                  Tarjeta
+                </button>
+              </div>
+
+              {/* MODO TRANSFERENCIA */}
+              {metodoPago === "transferencia" && (
+                <>
+                  <div className='info-cuenta'>
+                    <img src="https://alarmas.com.py/assets/img/pagos/ueno_bank_2x_1x-removebg-preview.png" alt="ueno bank logo" />
+                    <span><b>Nro.Cuenta: </b>0023243823-34</span>
+                    <span><b>Nombre: </b>Azzar</span>
+                    <span><b>Alias: </b>+595973492323</span>
+                  </div>
+
+                  <h3 className='pago-title'>Items a pagar</h3>
+                  <div className='pedidos-backline'></div>
+
+                  <ul className='items-list'>
+                    {resumen.map((item, index) => (
+                      <li className='item-pago' key={index}>
+                        <span>Rifa {item.nombrePremio} x{item.cantidad}</span>
+                        <span>{Number(item.total).toLocaleString('es-PY')} Gs</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div className='pago-total'>
+                    <span>Total:</span>
+                    <span className='pago-total-monto'>{Number(calcularTotal()).toLocaleString('es-PY')} Gs</span>
+                  </div>
+
+                  <div className="upload-card">
+                    <label className="upload-box">
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept=".jpg,.png"
+                        onChange={handleFileChange}
+                        className="hidden-input"
+                      />
+
+                      {!file ? (
+                        <>
+                          <span className="material-symbols-outlined upload-icon">upload</span>
+                          <p>Inserte el comprobante de pago</p>
+                        </>
+                      ) : (
+                        <div className="file-info">
+                          <span>{file.name}</span>
+                          <button className="remove-btn" onClick={removeFile}>
+                            <span className="material-symbols-outlined">delete</span>
+                          </button>
+                        </div>
+                      )}
+                    </label>
+                  </div>
+
+                  <button className='btn-pagar' onClick={pagarTransferencia}>
+                    Pagar ahora
+                  </button>
+                </>
+              )}
+
+              {/* MODO TARJETA */}
+              {metodoPago === "tarjeta" && (
+                <div className="tarjeta-form">
+
+                  <h3 className='pago-title'>Pago con tarjeta</h3>
+                  <div className='pedidos-backline'></div>
+
+                  <label className="label-tarjeta">
+                    Nombre en la tarjeta
+                    <input
+                      type="text"
+                      value={nombreTarjeta}
+                      onChange={(e) => setNombreTarjeta(e.target.value)}
+                      placeholder="Ej: Juan Pérez"
+                    />
+                  </label>
+
+                  <label className="label-tarjeta">
+                    Número de tarjeta
+                    <input
+                      type="text"
+                      value={numeroTarjeta}
+                      onChange={(e) => setNumeroTarjeta(formatearTarjeta(e.target.value))}
+                      placeholder="0000 0000 0000 0000"
+                      maxLength="19"
+                    />
+                  </label>
+
+                  <div className="tarjeta-flex">
+                    <label className="label-tarjeta">
+                      Expiración (MM/YY)
+                      <input
+                        type="text"
+                        value={expiracion}
+                        onChange={(e) => setExpiracion(formatearFecha(e.target.value))}
+                        placeholder="MM/YY"
+                        maxLength="5"
+                      />
+                    </label>
+
+                    <label className="label-tarjeta">
+                      CVV
+                      <input
+                        type="password"
+                        value={cvv}
+                        onChange={(e) => setCvv(e.target.value.replace(/\D/g, "").slice(0, 3))}
+                        placeholder="123"
+                        maxLength="3"
+                      />
+                    </label>
+                  </div>
+
+                  <button className="btn-pagar" onClick={pagarTarjeta}>
+                    Pagar con tarjeta
+                  </button>
+
+                </div>
+              )}
+
+            </div>
+          )}
+        </section>
+      </div>
+    </>
   );
 }
 

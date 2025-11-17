@@ -31,19 +31,29 @@
     border-radius: 10px;
     width: 400px;
     z-index: 21;
+    animation: fadeSlideIn 0.35s ease forwards;
 }
 
-.modal-crear-cuenta{
+.modal-crear-cuenta {
     background-color: #fff;
     position: relative;
     display: flex;
     flex-direction: column;
     gap: 15px;
     padding: 25px;
-    border-radius: 10px;
-    width: 500px;
+    border-radius: 12px;
+
+    /* 🔥 RESPONSIVE VERDADERO */
+    width: 90%;
+    max-width: 500px;
+    
+    max-height: 90vh;
+    overflow-y: auto;
+
+    animation: fadeSlideIn 0.35s ease forwards;
     z-index: 21;
 }
+
 
 .close-container{
     position: absolute;
@@ -276,4 +286,180 @@
     background-color: #202020;
     color: #fff;
     cursor: pointer;
+}
+
+.password-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-container input {
+  width: 100%;
+  padding-right: 40px;
+}
+
+
+.repeat-password-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.repeat-password-container input {
+  width: 100%;
+  padding-right: 40px;
+}
+
+
+.password-eye {
+  position: absolute;
+  right: 10px;
+  cursor: pointer;
+  font-size: 22px;
+  user-select: none;
+}
+
+.password-strength {
+  margin-top: 4px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.password-strength.weak {
+  color: #d9534f; /* rojo */
+}
+
+.password-strength.medium {
+  color: #f0ad4e; /* amarillo */
+}
+
+.password-strength.strong {
+  color: #5cb85c; /* verde */
+}
+
+
+.error-message{
+    color: red;
+    font-size: 14px;
+    text-align: center;
+}
+
+/* ============================
+   ANIMACIÓN DE APARICIÓN MODAL
+   ============================ */
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+
+/* ============================
+   📱 RESPONSIVE MODALES
+   ============================ */
+@media (max-width: 768px) {
+
+  .modal-crear-cuenta,
+  .modal-check {
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 20px;
+    border-radius: 12px;
+  }
+
+  .crear-cuenta-title {
+    font-size: 22px;
+  }
+
+  .label-field span {
+    font-size: 14px;
+  }
+
+  .label-field input,
+  .telefono-input,
+  .telefono-select,
+  .select-field {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+
+  .nombre-telefono-container {
+    flex-direction: column;
+  }
+
+  .inputs-container {
+    gap: 10px;
+  }
+
+  .inputs-container input {
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 16px !important;
+  }
+
+  .btn-verificar {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .btn-reenviar {
+    font-size: 11px;
+  }
+
+  .registrar-btn {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .password-eye {
+    font-size: 20px;
+  }
+
+  .nombre-telefono-container {
+    flex-direction: column !important;
+    gap: 10px;
+  }
+
+  .nombre-telefono-container .label-field {
+    width: 100% !important;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .modal-crear-cuenta,
+  .modal-check {
+    width: 95%;
+    padding: 18px;
+  }
+
+  .crear-cuenta-title {
+    font-size: 20px;
+  }
+
+  .inputs-container input {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 15px !important;
+  }
+
+  .password-strength {
+    font-size: 12px;
+  }
+
+  .nombre-telefono-container {
+    flex-direction: column !important;
+    gap: 10px;
+  }
+
+  .nombre-telefono-container .label-field {
+    width: 100% !important;
+  }
 }

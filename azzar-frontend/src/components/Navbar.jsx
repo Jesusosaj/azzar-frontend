@@ -87,7 +87,7 @@ function Navbar() {
         <div className="navbar-container">
           <h1 className="navbar-logo cursor-pointer" onClick={Inicio}>Azzar</h1>
           <div className="navbar-links">
-            <span className="item-account" onClick={Inicio}>Inicio</span>
+            <span className="item-account inicio" onClick={Inicio}>Inicio</span>
             {usuario ? (
               <>
                 {/* Usuario */}

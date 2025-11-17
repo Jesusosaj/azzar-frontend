@@ -28,7 +28,9 @@ export const CarritoProvider = ({ children }) => {
       if (exists) {
         return prev.filter((t) => t.ID_RIFA !== ticket.ID_RIFA);
       } else {
-        setIsCartOpen(true);
+        if (window.innerWidth > 768) {
+          setIsCartOpen(true);
+        }
         return [...prev, ticket];
       }
     });

@@ -3,6 +3,9 @@ import React, { useEffect, useState, useContext} from "react";
 import '../InfoPremio/InfoPremio.css';
 import { CartContext } from "../../context/CarritoContext.jsx";
 
+import useNotificacion from "../../components/hooks/useNotificacion.js";
+import Notificacion from "../../components/Notificacion.jsx";
+
 function InfoPremio() {
   const { nombreId } = useParams();
   const [nombre, id] = nombreId ? nombreId.split('+') : ["", ""];
@@ -12,6 +15,7 @@ function InfoPremio() {
   const [hoveredTicket, setHoveredTicket] = useState(null);
 
   const { cart, toggleTicket, setIsCartOpen } = useContext(CartContext);
+  const { toasts, showToast, removeToast } = useNotificacion();
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -68,7 +72,13 @@ function InfoPremio() {
     };
 
     toggleTicket(ticketsData);
-    setIsCartOpen(true);
+    if (window.innerWidth > 768) {
+      setIsCartOpen(true);
+    }
+
+    if (window.innerWidth <= 768) {
+      showToast("Rifa añadida al carrito", "success");
+    }
   };
 
   const isSelected = (ticketId) => cart.some((t) => t.ID_RIFA === ticketId);

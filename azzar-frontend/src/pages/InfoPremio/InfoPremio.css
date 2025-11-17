@@ -200,3 +200,210 @@
   font-weight: 500;
   color: #202020;
 }
+
+
+/* ===================================================================== */
+/* 📱📱 RESPONSIVE DESIGN – INFO PREMIO                                   */
+/* ===================================================================== */
+
+
+/* ===================================================================== */
+/* 💻 Tablet (entre 768px – 1024px)                                      */
+/* ===================================================================== */
+@media (max-width: 1024px) {
+
+  .info-container-header {
+    width: 90%;
+    flex-direction: row;
+    gap: 20px;
+  }
+
+  .info-container-header-img {
+    width: 250px;
+    height: 180px;
+  }
+
+  .info-container-header-text h3 {
+    font-size: 22px;
+  }
+
+  .rifas-container-header {
+    width: 90%;
+  }
+
+  .rifas-list {
+    justify-content: center;
+  }
+
+  .ticket {
+    padding: 12px;
+    font-size: 12px;
+  }
+}
+
+
+/* ===================================================================== */
+/* 📱 Mobile grande (480px – 768px)                                      */
+/* ===================================================================== */
+@media (max-width: 768px) {
+
+  .info-container {
+    align-items: start;
+    padding-top: 100px; /* evita que el navbar lo tape */
+  }
+
+  .info-container-header {
+    width: 90%;
+    flex-direction: column;
+    text-align: center;
+    gap: 20px;
+    padding-bottom: 30px;
+  }
+
+  .info-container-header-img {
+    width: 220px;
+    height: 160px;
+  }
+
+  .info-container-header-text {
+    align-items: center;
+  }
+
+  .info-container-header-text h3 {
+    font-size: 22px;
+  }
+
+  .info-container-header-text p {
+    font-size: 14px;
+    max-width: 90%;
+  }
+
+  .info-container-header-text span {
+    font-size: 14px;
+  }
+
+  .title-rifas-container {
+    top: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .estados-rifas-list {
+    width: fit-content;
+  }
+
+  .rifas-list {
+    justify-content: center;
+    margin: 20px 0;
+  }
+
+  .ticket {
+    padding: 12px;
+    width: 50px;
+    height: 50px;
+  }
+
+  .ticket-number {
+    font-size: 10px;
+  }
+
+  .ticket-tooltip {
+    top: -65px;
+  }
+
+  .estados-rifas-container {
+    position: relative;
+    display: flex;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .estados-rifas-list{
+    display: flex;
+    width: 100%;
+  }
+}
+
+
+/* ===================================================================== */
+/* 📱 Mobile pequeño (280px – 480px)                                     */
+/* ===================================================================== */
+@media (max-width: 480px) {
+
+  .info-container-header {
+    width: 92%;
+    padding: 15px;
+  }
+
+  .info-container-header-img {
+    width: 200px;
+    height: 150px;
+  }
+
+  .estados-rifas-container {
+    position: relative;
+    display: flex;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .info-container-header-text h3 {
+    font-size: 20px;
+  }
+
+  .info-container-header-text p {
+    font-size: 13px;
+  }
+
+  .info-container-header-text span {
+    font-size: 13px;
+  }
+
+  .title-rifas-container {
+    top: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+
+  .title-rifas {
+    font-size: 18px;
+  }
+
+  .estados-rifas-list {
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .estados-item {
+    align-items: center;
+  }
+
+  .estados-text {
+    font-size: 12px;
+  }
+
+  .rifas-list {
+    gap: 10px;
+    justify-content: center;
+    margin: 20px 0;
+  }
+
+  .ticket {
+    width: 42px;
+    height: 42px;
+    padding: 8px;
+    font-size: 11px;
+  }
+
+  .ticket-number {
+    font-size: 9px;
+  }
+
+  .ticket-tooltip {
+    top: -60px;
+    font-size: 11px;
+  }
+}

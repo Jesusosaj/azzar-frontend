@@ -185,3 +185,102 @@
   color: #ffffff;
 }
 
+/* 📱📱 RESPONSIVE DESIGN PARA PREMIOS */
+
+/* Tablet */
+@media (max-width: 992px) {
+
+  .premios-container-header {
+    width: 90%;
+  }
+
+  .search-container {
+    width: 100%;
+  }
+
+  .premios-container-main-list-content {
+    justify-content: center;
+  }
+
+  .premios-item {
+    max-width: 48%;
+  }
+}
+
+/* Mobile grande */
+@media (max-width: 768px) {
+
+  .premios-container {
+    padding-top: 100px; /* evita que el navbar lo tape */
+  }
+
+  .premios-container-header {
+    width: 90%;
+  }
+
+  .premios-container-main-search {
+    flex-direction: column;
+    height: auto;
+    gap: 10px;
+  }
+
+  .search-container {
+    width: 100%;
+  }
+
+  .premios-container-main-list-content {
+    justify-content: center;
+    gap: 15px;
+  }
+
+  .premios-item {
+    max-width: 90%;
+    width: 90%;
+    max-height: none;
+  }
+
+  .premios-img-container {
+    height: 180px;
+  }
+}
+
+/* Móvil pequeño (iPhone SE, etc.) */
+@media (max-width: 480px) {
+
+  .premios-container-header-h2 {
+    font-size: 20px;
+    text-align: center;
+  }
+
+  .premios-item {
+    width: 100%;
+    max-width: 100%;
+    padding: 12px;
+  }
+
+  .premios-img-container {
+    height: 150px;
+  }
+
+  .premios-title {
+    font-size: 18px;
+  }
+
+  .premios-precio {
+    font-size: 13px;
+  }
+
+  .premios-descripcion {
+    font-size: 11px;
+  }
+
+  .premios-btn {
+    padding: 8px;
+    font-size: 14px;
+  }
+
+  .premios-container-main-paginas button {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+}
